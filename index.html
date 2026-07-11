@@ -943,12 +943,11 @@ function guardarComida() {
 function estimateMacrosFromPhoto(dataUrl) {
   var base64 = dataUrl.split(",")[1];
   var media = dataUrl.indexOf("image/png") > -1 ? "image/png" : "image/jpeg";
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + encodeURIComponent(DB.settings.apiKey);
   return fetch(url, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": DB.settings.apiKey
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       contents: [{ parts: [
