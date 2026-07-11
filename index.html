@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Bitácora</title>
+<meta name="description" content="Diario personal de entrenamiento y alimentación">
+<!-- PWA / iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bitácora">
+<meta name="theme-color" content="#FAFAF9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111110" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADX0lEQVR42u3dQVLjMBCGUaLiAlkx9z8d3GIWs51hnOBY/Xe/b01VbPlFksEkt/v9/ib9rWUIBIfgEByCQ3AIDsEhOASH4JDgEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkOCQ3AIDsEhOASH4BAc6tL72DP/+vo8/sMfH78GDtFtzofUPqSBlRE4TjQxTUlbHC81MURJQxwXs2hMpBWOjSxaEmmCowiLZkTicRRk0YZINo4fyjh45a55FTg2szjlOm18aTjOvzwvujBFDgOOJy/JBdej8a/hk3AcvwxbrkHxw+uM4+DQbx/3lOM80iJjy71r8TvwmJnjyDgWfCOGHnbSzJE7xEeOqvj8scjg418FPwkWsaf7c5ARO4ykmeP7Ac36hcH3R1uWTtEN6ZUyvnmty16oJvdlzjB/pN6ttJGRePzlcITu3Vqe+woanR6P3wUtLqvHmFpcmuO47K6huI86k4f/lVV5HKOmjZTJY+WOoM3HCByTb18rj8nyxnKOdXGYNsqOjLsVBeKY82E6Zc90Mw5rSuXxWd5MzteeQ1E4rCnFR6nizDHzcx09JijLiuAQHHajQ/ek5WaOmbvRmuduWREcgkNwCA7BITgEh+AQHIJDgkPBOHyyDxyj//qaMlaWFcEhONQcx8w9qQ+ptSdNGiXLitJwTFtZap7vZhxWlsrjs7yZnKk9hwJxWFnKjkz8FwBaU5rjMHnUHJPljeXsquOI+IqJy2QUmUrdrSgBx6jJI+IrRFaD0bTVGIEj9JubT5RR6sbNJ/s49y4b0vTJI+v48z6kNtdH3Lfm3u73u6F0OmHLSqf5IxT6e/r6XXwKid4kxX8BYOXRP3JsvgBwoo90GaU3pE9c/iJjnXW0wTPHQ+NYYQppIyNm5nj02m8Z+uKH1xzHE9PDBZeh2vGMxvHE8vGiS1LkMOA4Z3txyuXZ+NJwvPw6XbzPzf07czaOt/K/gox+AiEeR1kiDR5MaYKjFJE2zyu1wrGdSLPH2Bri2EKk5dONbXFco6T3E6/9cbxCyZCnoAfh+ImVmc/Ez8Wh/+Z/ZQWH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+BQWr8Bhh5Rvje+TtAAAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADX0lEQVR42u3dQVLjMBCGUaLiAlkx9z8d3GIWs51hnOBY/Xe/b01VbPlFksEkt/v9/ib9rWUIBIfgEByCQ3AIDsEhOASH4JDgEByCQ3AIDsEhOASH4BAcEhyCQ3AIDsEhOASH4BAcgkOCQ3AIDsEhOASH4BAc6tL72DP/+vo8/sMfH78GDtFtzofUPqSBlRE4TjQxTUlbHC81MURJQxwXs2hMpBWOjSxaEmmCowiLZkTicRRk0YZINo4fyjh45a55FTg2szjlOm18aTjOvzwvujBFDgOOJy/JBdej8a/hk3AcvwxbrkHxw+uM4+DQbx/3lOM80iJjy71r8TvwmJnjyDgWfCOGHnbSzJE7xEeOqvj8scjg418FPwkWsaf7c5ARO4ykmeP7Ac36hcH3R1uWTtEN6ZUyvnmty16oJvdlzjB/pN6ttJGRePzlcITu3Vqe+woanR6P3wUtLqvHmFpcmuO47K6huI86k4f/lVV5HKOmjZTJY+WOoM3HCByTb18rj8nyxnKOdXGYNsqOjLsVBeKY82E6Zc90Mw5rSuXxWd5MzteeQ1E4rCnFR6nizDHzcx09JijLiuAQHHajQ/ek5WaOmbvRmuduWREcgkNwCA7BITgEh+AQHIJDgkPBOHyyDxyj//qaMlaWFcEhONQcx8w9qQ+ptSdNGiXLitJwTFtZap7vZhxWlsrjs7yZnKk9hwJxWFnKjkz8FwBaU5rjMHnUHJPljeXsquOI+IqJy2QUmUrdrSgBx6jJI+IrRFaD0bTVGIEj9JubT5RR6sbNJ/s49y4b0vTJI+v48z6kNtdH3Lfm3u73u6F0OmHLSqf5IxT6e/r6XXwKid4kxX8BYOXRP3JsvgBwoo90GaU3pE9c/iJjnXW0wTPHQ+NYYQppIyNm5nj02m8Z+uKH1xzHE9PDBZeh2vGMxvHE8vGiS1LkMOA4Z3txyuXZ+NJwvPw6XbzPzf07czaOt/K/gox+AiEeR1kiDR5MaYKjFJE2zyu1wrGdSLPH2Bri2EKk5dONbXFco6T3E6/9cbxCyZCnoAfh+ImVmc/Ez8Wh/+Z/ZQWH4BAcgkNwCA7BITgEh+CQ4BAcgkNwCA7BITgEh+AQHBIcgkNwCA7BITgEh+AQHIJDgkNwCA7BITgEh+BQWr8Bhh5Rvje+TtAAAAAASUVORK5CYII=">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Bit%C3%A1cora","short_name":"Bit%C3%A1cora","display":"standalone","background_color":"%23FAFAF9","theme_color":"%23111110","start_url":"."}'>
+<style>
+/* ============================================================
+   BITÁCORA · Diario de entrenamiento y alimentación
+   Tokens de diseño — escala de grises estricta
+   ============================================================ */
+:root{
+  --paper:#FAFAF9;        /* fondo */
+  --card:#FFFFFF;         /* superficies */
+  --ink:#161615;          /* texto principal / relleno activo */
+  --ink-2:#5C5C5A;        /* texto secundario */
+  --ink-3:#9C9C99;        /* texto terciario / etiquetas */
+  --line:#E8E8E5;         /* hairlines */
+  --track:#EFEFEC;        /* pistas de barras */
+  --press:#F1F1EE;        /* estado pulsado */
+  --danger:#3A3A38;       /* "alerta" en gris muy oscuro */
+  --radius:16px;
+  --pad:20px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#111110; --card:#1B1B1A; --ink:#F2F2EF; --ink-2:#B4B4B0;
+    --ink-3:#7A7A76; --line:#2A2A28; --track:#262624; --press:#242422;
+    --danger:#D9D9D5;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--paper);color:var(--ink);
+  min-height:100vh;min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+button,input,select,textarea{font:inherit;color:inherit;background:none;border:none;outline:none}
+button{cursor:pointer}
+input,textarea{width:100%}
+
+/* ---------- Tipografía ---------- */
+.display{font-size:56px;font-weight:700;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1}
+.big-num{font-size:34px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+h1{font-size:26px;font-weight:700;letter-spacing:-0.02em}
+h2{font-size:17px;font-weight:600;letter-spacing:-0.01em}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3)}
+.sub{font-size:14px;color:var(--ink-2)}
+.small{font-size:12.5px;color:var(--ink-3)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Estructura ---------- */
+#app{max-width:560px;margin:0 auto;padding:calc(var(--safe-t) + 18px) var(--pad) calc(96px + var(--safe-b))}
+header.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+header.top .date{font-size:13px;color:var(--ink-3);font-weight:500}
+.view-anim{animation:fadein .22s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- Tarjetas ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.card.flat{background:none;border:none;padding:0}
+.card-tap{transition:background .12s}
+.card-tap:active{background:var(--press)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stack{display:flex;flex-direction:column;gap:4px}
+.hr{height:1px;background:var(--line);margin:14px 0;border:none}
+.section-title{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 12px}
+.section-title:first-child{margin-top:0}
+
+/* ---------- Barras de macros ---------- */
+.bar{height:5px;border-radius:3px;background:var(--track);overflow:hidden;margin-top:7px}
+.bar > i{display:block;height:100%;background:var(--ink);border-radius:3px;transition:width .5s cubic-bezier(.22,.8,.3,1)}
+.bar.over > i{background:var(--danger);opacity:.55}
+.macro-row{margin-bottom:16px}
+.macro-row:last-child{margin-bottom:0}
+
+/* ---------- Botones ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  padding:15px;border-radius:14px;font-weight:600;font-size:15.5px;
+  background:var(--ink);color:var(--paper);transition:opacity .12s,transform .12s}
+.btn:active{transform:scale(.985);opacity:.9}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:active{background:var(--press)}
+.btn.quiet{background:none;color:var(--ink-2);padding:10px;font-size:14px}
+.btn.sm{padding:9px 14px;width:auto;font-size:13.5px;border-radius:10px}
+.btn.danger{background:none;border:1px solid var(--line);color:var(--ink-2)}
+.btn:disabled{opacity:.35;pointer-events:none}
+.icon-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  border-radius:12px;color:var(--ink-2);flex:none}
+.icon-btn:active{background:var(--press)}
+
+/* ---------- Formularios ---------- */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:7px}
+.field input,.field textarea,.field select{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:13px 14px;font-size:16px;width:100%;color:var(--ink);-webkit-appearance:none;appearance:none}
+.field input:focus,.field textarea:focus{border-color:var(--ink-3)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+/* ---------- Tabla de series (sesión activa) ---------- */
+.set-row{display:grid;grid-template-columns:28px 1fr 1fr 44px;gap:10px;align-items:center;padding:7px 0}
+.set-row input{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;font-size:16px;font-variant-numeric:tabular-nums}
+.set-row .idx{font-size:13px;color:var(--ink-3);font-weight:600;text-align:center}
+.check{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:transparent;transition:all .15s}
+.check.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.set-head{display:grid;grid-template-columns:28px 1fr 1fr 44px;gap:10px;margin-bottom:2px}
+.set-head span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);text-align:center;font-weight:600}
+
+/* ---------- Navegación inferior ---------- */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  padding:8px max(var(--pad),env(safe-area-inset-left)) calc(8px + var(--safe-b))}
+nav.tabs .inner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--ink-3);font-size:10.5px;font-weight:600;letter-spacing:.02em}
+nav.tabs button svg{width:23px;height:23px}
+nav.tabs button.active{color:var(--ink)}
+
+/* ---------- Hoja modal (bottom sheet) ---------- */
+.sheet-veil{position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:60;animation:fadein .18s ease}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;background:var(--paper);
+  border-radius:22px 22px 0 0;max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:12px var(--pad) calc(24px + var(--safe-b));animation:up .26s cubic-bezier(.22,.8,.3,1)}
+.sheet .grip{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px}
+.sheet .sheet-inner{max-width:560px;margin:0 auto}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+
+/* ---------- Listas ---------- */
+.list-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:none}
+.thumb{width:52px;height:52px;border-radius:12px;object-fit:cover;background:var(--track);flex:none;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-3)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--line);
+  border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);background:var(--card)}
+.chip:active{background:var(--press)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Gráficos ---------- */
+.chart{width:100%;display:block}
+.chart .axis{font-size:10px;fill:var(--ink-3);font-family:inherit}
+.chart .ln{stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chart .ar{fill:var(--ink);opacity:.06}
+.chart .dot{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+.chart .gridln{stroke:var(--line);stroke-width:1}
+
+/* ---------- Varios ---------- */
+.toast{position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:14px;
+  font-weight:500;z-index:99;animation:fadein .2s ease;max-width:85%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{text-align:center;padding:44px 20px;color:var(--ink-3)}
+.empty svg{width:34px;height:34px;margin-bottom:12px;opacity:.6}
+.empty p{font-size:14px;max-width:240px;margin:0 auto;line-height:1.5}
+.trend-up::before{content:"↑ "}
+.trend-down::before{content:"↓ "}
+.trend-flat::before{content:"→ "}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;line-height:1.55;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;
+  white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;color:var(--ink-2)}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:14px;font-weight:500;padding:4px 0;margin-bottom:14px}
+.spin{width:16px;height:16px;border:2px solid var(--paper);border-top-color:transparent;border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
+.spin.dark{border-color:var(--ink);border-top-color:transparent}
+@keyframes rot{to{transform:rotate(360deg)}}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:12px;padding:3px;margin-bottom:16px}
+.seg button{padding:9px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="tabs"><div class="inner" id="tabbar"></div></nav>
+<script>
+/* ============================================================
+   NÚCLEO · almacenamiento, utilidades, router
+   ============================================================ */
+"use strict";
+
+var STORE_KEY = "bitacora_v1";
+
+var DEFAULTS = {
+  version: 1,
+  settings: { goals: { kcal: 2200, prot: 160, carb: 220, fat: 70 }, apiKey: "" },
+  rutinas: [],       // {id,nombre,dias:[{nombre,ejercicios:[{nombre,series,reps}]}]}
+  sesiones: [],      // {id,fecha,rutinaNombre,diaNombre,ejercicios:[{nombre,series:[{peso,reps,done}]}]}
+  activa: null,      // sesión en curso (sobrevive a recargas)
+  pesos: [],         // {fecha,kg}
+  comidas: [],       // {id,fecha,hora,nombre,kcal,prot,carb,fat,foto}
+  frecuentes: []     // {id,nombre,kcal,prot,carb,fat,foto}
+};
+
+var DB = load();
+
+function load() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
+    var d = JSON.parse(raw);
+    // fusiona claves nuevas si se amplía el modelo en el futuro
+    for (var k in DEFAULTS) if (!(k in d)) d[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
+    if (!d.settings.goals) d.settings.goals = DEFAULTS.settings.goals;
+    return d;
+  } catch (e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
+  catch (e) { toast("No se pudo guardar (almacenamiento lleno)"); }
+}
+
+/* ---------- utilidades ---------- */
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function todayISO(d) { d = d || new Date(); var p = function(n){return (n<10?"0":"")+n;}; return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
+function nowHM() { var d=new Date(),p=function(n){return (n<10?"0":"")+n;}; return p(d.getHours())+":"+p(d.getMinutes()); }
+var MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var DIAS_SEM = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+function fmtFecha(iso, largo) {
+  var pt = iso.split("-"), d = new Date(+pt[0], +pt[1]-1, +pt[2]);
+  var s = d.getDate() + " " + MESES[d.getMonth()];
+  if (largo) s = DIAS_SEM[d.getDay()] + ", " + s;
+  if (+pt[0] !== new Date().getFullYear()) s += " " + pt[0];
+  return s;
+}
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function n1(x) { return Math.round(x * 10) / 10; }
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+function sum(arr, f) { var t=0; for (var i=0;i<arr.length;i++) t += f(arr[i])||0; return t; }
+function byDateAsc(a,b){ return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0; }
+
+function toast(msg) {
+  var old = document.querySelector(".toast"); if (old) old.remove();
+  var t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity = "0"; t.style.transition = "opacity .3s"; }, 1900);
+  setTimeout(function(){ t.remove(); }, 2300);
+}
+
+function copyText(txt, okMsg) {
+  function fallback() {
+    var ta = document.createElement("textarea"); ta.value = txt;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast(okMsg || "Copiado"); } catch(e){ toast("No se pudo copiar"); }
+    ta.remove();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(function(){ toast(okMsg || "Copiado"); }, fallback);
+  } else fallback();
+}
+
+function download(nombre, contenido, tipo) {
+  var blob = new Blob([contenido], { type: tipo || "application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nombre;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* ---------- iconos (trazo 1.6, minimal) ---------- */
+function icon(name, sz) {
+  var paths = {
+    hoy: '<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 2"/>',
+    entreno: '<path d="M4 9v6M8 6v12M16 6v12M20 9v6M8 12h8"/>',
+    comida: '<path d="M5 3v7a2.5 2.5 0 0 0 2.5 2.5h0A2.5 2.5 0 0 0 10 10V3M7.5 3v18M16.5 3c-1.7 1-2.5 3.4-2.5 6 0 2 .8 3 2.5 3v9M16.5 3c1.2 1.4 1.8 3.7 1.8 6"/>',
+    informes: '<path d="M5 20V10M12 20V4M19 20v-7"/>',
+    ajustes: '<circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/>',
+    mas: '<path d="M12 5v14M5 12h14"/>',
+    atras: '<path d="M14.5 6 9 12l5.5 6"/>',
+    ok: '<path d="M5 12.5 10 17.5 19 7"/>',
+    borrar: '<path d="M5 7h14M9.5 7V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2M8 7l.7 12a1.2 1.2 0 0 0 1.2 1h4.2a1.2 1.2 0 0 0 1.2-1L16 7"/>',
+    foto: '<rect x="3.5" y="6" width="17" height="14" rx="2.5"/><path d="M8.5 6 10 3.5h4L15.5 6"/><circle cx="12" cy="12.6" r="3.4"/>',
+    editar: '<path d="M14.5 5.5 18.5 9.5M4.5 19.5l1-4.5L15 5.5a1.6 1.6 0 0 1 2.3 0l1.7 1.7a1.6 1.6 0 0 1 0 2.3L9.5 19l-5 .5Z"/>',
+    copiar: '<rect x="8.5" y="8.5" width="11" height="12" rx="2"/><path d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5"/>',
+    descargar: '<path d="M12 4v11M7.5 11.5 12 16l4.5-4.5M5 19.5h14"/>',
+    repetir: '<path d="M4 12a8 8 0 0 1 13.6-5.7L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.6 5.7L4 15.5M4 20v-4.5h4.5"/>',
+    peso: '<circle cx="12" cy="12" r="8.5"/><path d="M12 12l3-4"/><path d="M7.5 15.5h9"/>',
+    chispa: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z"/>'
+  };
+  return '<svg viewBox="0 0 24 24" width="'+(sz||20)+'" height="'+(sz||20)+'" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+paths[name]+'</svg>';
+}
+
+/* ---------- gráfico de línea SVG (escala de grises) ---------- */
+function lineChart(puntos, opts) {
+  // puntos: [{fecha, v}] ordenados asc · opts: {h, unidad}
+  opts = opts || {};
+  var H = opts.h || 150, W = 340, padL = 34, padR = 12, padT = 14, padB = 24;
+  if (!puntos.length) return "";
+  if (puntos.length === 1) puntos = [puntos[0], puntos[0]];
+  var vs = puntos.map(function(p){ return p.v; });
+  var min = Math.min.apply(null, vs), max = Math.max.apply(null, vs);
+  if (min === max) { min -= 1; max += 1; }
+  var span = max - min; min -= span * 0.12; max += span * 0.12; span = max - min;
+  var iw = W - padL - padR, ih = H - padT - padB;
+  function X(i){ return padL + (i / (puntos.length - 1)) * iw; }
+  function Y(v){ return padT + (1 - (v - min) / span) * ih; }
+  var line = "", area = "";
+  for (var i = 0; i < puntos.length; i++) {
+    var x = X(i).toFixed(1), y = Y(puntos[i].v).toFixed(1);
+    line += (i ? " L" : "M") + x + " " + y;
+  }
+  area = line + " L" + X(puntos.length-1).toFixed(1) + " " + (H-padB) + " L" + padL + " " + (H-padB) + " Z";
+  // rejilla: 3 líneas
+  var grid = "", labs = "";
+  for (var g = 0; g < 3; g++) {
+    var vv = min + span * (0.15 + 0.35 * g);
+    var gy = Y(vv).toFixed(1);
+    grid += '<line class="gridln" x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'"/>';
+    labs += '<text class="axis" x="'+(padL-6)+'" y="'+(+gy+3)+'" text-anchor="end">'+n1(vv)+'</text>';
+  }
+  // puntos: solo primero, último y máximo si hay muchos
+  var dots = "";
+  var show = puntos.length <= 12 ? puntos.map(function(_,i){return i;}) : [0, vs.indexOf(Math.max.apply(null,vs)), puntos.length-1];
+  var seen = {};
+  for (var j = 0; j < show.length; j++) {
+    var idx = show[j]; if (seen[idx]) continue; seen[idx] = 1;
+    dots += '<circle class="dot" r="3.2" cx="'+X(idx).toFixed(1)+'" cy="'+Y(puntos[idx].v).toFixed(1)+'"/>';
+  }
+  var f0 = fmtFecha(puntos[0].fecha), f1 = fmtFecha(puntos[puntos.length-1].fecha);
+  labs += '<text class="axis" x="'+padL+'" y="'+(H-7)+'">'+f0+'</text>';
+  if (f1 !== f0) labs += '<text class="axis" x="'+(W-padR)+'" y="'+(H-7)+'" text-anchor="end">'+f1+'</text>';
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'">'+grid+'<path class="ar" d="'+area+'"/><path class="ln" d="'+line+'"/>'+dots+labs+'</svg>';
+}
+
+/* ---------- bottom sheet ---------- */
+function openSheet(html) {
+  closeSheet();
+  var veil = document.createElement("div"); veil.className = "sheet-veil"; veil.id = "veil";
+  veil.onclick = closeSheet;
+  var sh = document.createElement("div"); sh.className = "sheet"; sh.id = "sheet";
+  sh.innerHTML = '<div class="grip"></div><div class="sheet-inner">' + html + '</div>';
+  document.body.appendChild(veil); document.body.appendChild(sh);
+}
+function closeSheet() {
+  var v = document.getElementById("veil"), s = document.getElementById("sheet");
+  if (v) v.remove(); if (s) s.remove();
+}
+
+/* ---------- router ---------- */
+var ROUTE = { tab: "hoy", sub: null, param: null };
+function go(tab, sub, param) {
+  ROUTE = { tab: tab, sub: sub || null, param: param || null };
+  render();
+  window.scrollTo(0, 0);
+}
+function render() {
+  closeSheet();
+  var app = document.getElementById("app");
+  var v;
+  if (ROUTE.tab === "hoy") v = viewHoy();
+  else if (ROUTE.tab === "entreno") v = viewEntreno();
+  else if (ROUTE.tab === "comida") v = viewComida();
+  else if (ROUTE.tab === "informes") v = viewInformes();
+  app.innerHTML = '<div class="view-anim">' + v + '</div>';
+  renderTabs();
+  if (typeof afterRender === "function" && afterRender._fn) { var f = afterRender._fn; afterRender._fn = null; f(); }
+}
+function afterRender(fn) { afterRender._fn = fn; }
+
+function renderTabs() {
+  var tabs = [["hoy","Hoy"],["entreno","Entreno"],["comida","Comida"],["informes","Informes"]];
+  var h = "";
+  for (var i = 0; i < tabs.length; i++) {
+    var t = tabs[i];
+    h += '<button class="'+(ROUTE.tab===t[0]?"active":"")+'" onclick="go(\''+t[0]+'\')">'+icon(t[0],23)+'<span>'+t[1]+'</span></button>';
+  }
+  document.getElementById("tabbar").innerHTML = h;
+}
+
+/* ---------- cálculo de macros del día ---------- */
+function macrosDia(fecha) {
+  var cs = DB.comidas.filter(function(c){ return c.fecha === fecha; });
+  return {
+    kcal: sum(cs, function(c){return c.kcal;}),
+    prot: sum(cs, function(c){return c.prot;}),
+    carb: sum(cs, function(c){return c.carb;}),
+    fat:  sum(cs, function(c){return c.fat;}),
+    comidas: cs
+  };
+}
+function restantes(fecha) {
+  var m = macrosDia(fecha), g = DB.settings.goals;
+  return { kcal: g.kcal - m.kcal, prot: g.prot - m.prot, carb: g.carb - m.carb, fat: g.fat - m.fat };
+}
+/* ============================================================
+   VISTA · HOY (dashboard)
+   ============================================================ */
+function viewHoy() {
+  var hoy = todayISO();
+  var g = DB.settings.goals, m = macrosDia(hoy), r = restantes(hoy);
+  var h = '<header class="top"><h1>Hoy</h1><span class="date">' + fmtFecha(hoy, true) + '</span>'
+        + '<button class="icon-btn" onclick="sheetAjustes()" aria-label="Ajustes">' + icon("ajustes") + '</button></header>';
+
+  /* --- hero: kcal restantes --- */
+  h += '<div class="card" style="text-align:center;padding:26px 18px">'
+     + '<div class="eyebrow" style="margin-bottom:10px">' + (r.kcal >= 0 ? "kcal restantes" : "kcal por encima del objetivo") + '</div>'
+     + '<div class="display">' + Math.abs(Math.round(r.kcal)) + '</div>'
+     + '<div class="small num" style="margin-top:10px">' + Math.round(m.kcal) + ' de ' + g.kcal + ' kcal</div>'
+     + '<div class="bar' + (m.kcal > g.kcal ? " over" : "") + '" style="max-width:220px;margin:14px auto 0"><i style="width:' + clamp(m.kcal/g.kcal*100,0,100) + '%"></i></div>'
+     + '</div>';
+
+  /* --- macros --- */
+  h += '<div class="card">' + macroBars(m, g) + '</div>';
+
+  /* --- entreno de hoy --- */
+  h += '<div class="section-title"><span class="eyebrow">Entrenamiento</span></div>';
+  if (DB.activa) {
+    h += '<div class="card card-tap" onclick="go(\'entreno\',\'sesion\')"><div class="row">'
+       + '<div class="stack"><h2>Sesión en curso</h2><span class="sub">' + esc(DB.activa.rutinaNombre) + ' · ' + esc(DB.activa.diaNombre) + '</span></div>'
+       + '<span style="color:var(--ink-3)">' + icon("atras").replace('M14.5 6 9 12l5.5 6','M9.5 6 15 12l-5.5 6') + '</span></div></div>';
+  } else {
+    var sesHoy = DB.sesiones.filter(function(s){ return s.fecha === hoy; });
+    if (sesHoy.length) {
+      h += '<div class="card"><div class="row"><div class="stack"><h2>' + esc(sesHoy[0].diaNombre) + '</h2>'
+         + '<span class="sub">Completado · ' + sesHoy[0].ejercicios.length + ' ejercicios</span></div>'
+         + '<span style="color:var(--ink)">' + icon("ok") + '</span></div></div>';
+    } else if (DB.rutinas.length) {
+      h += '<div class="card card-tap" onclick="go(\'entreno\')"><div class="row">'
+         + '<div class="stack"><h2>Sin registrar</h2><span class="sub">Toca para empezar una sesión</span></div>'
+         + '<span style="color:var(--ink-3)">' + icon("entreno") + '</span></div></div>';
+    } else {
+      h += '<div class="card card-tap" onclick="go(\'entreno\')"><div class="stack"><h2>Crea tu primera rutina</h2><span class="sub">Define días y ejercicios para empezar</span></div></div>';
+    }
+  }
+
+  /* --- peso corporal --- */
+  h += '<div class="section-title"><span class="eyebrow">Peso corporal</span>'
+     + '<button class="btn quiet" style="width:auto;padding:0" onclick="sheetPeso()">Añadir</button></div>';
+  var ps = DB.pesos.slice().sort(byDateAsc);
+  if (ps.length) {
+    var ult = ps[ps.length-1];
+    var prev = ps.length > 1 ? ps[ps.length-2] : null;
+    var dif = prev ? n1(ult.kg - prev.kg) : 0;
+    var cls = dif > 0.05 ? "trend-up" : dif < -0.05 ? "trend-down" : "trend-flat";
+    h += '<div class="card"><div class="row" style="margin-bottom:' + (ps.length>1?'10px':'0') + '">'
+       + '<div><span class="big-num">' + n1(ult.kg) + '</span> <span class="sub">kg</span></div>'
+       + '<div class="stack" style="align-items:flex-end"><span class="sub ' + cls + ' num">' + Math.abs(dif) + ' kg</span>'
+       + '<span class="small">' + fmtFecha(ult.fecha) + '</span></div></div>'
+       + (ps.length > 1 ? lineChart(ps.slice(-30).map(function(p){return {fecha:p.fecha, v:p.kg};}), {h:130}) : '')
+       + '</div>';
+  } else {
+    h += '<div class="card"><span class="sub">Aún no hay registros. Añade tu peso para ver la evolución.</span></div>';
+  }
+  return h;
+}
+
+function macroBars(m, g) {
+  var defs = [["Proteína","prot","g"],["Carbohidratos","carb","g"],["Grasas","fat","g"]];
+  var h = "";
+  for (var i = 0; i < defs.length; i++) {
+    var d = defs[i], cons = m[d[1]], obj = g[d[1]], resta = obj - cons;
+    h += '<div class="macro-row"><div class="row">'
+       + '<span style="font-size:14px;font-weight:500">' + d[0] + '</span>'
+       + '<span class="small num">' + Math.round(cons) + ' / ' + obj + ' ' + d[2]
+       + ' · <b style="color:var(--ink)">' + (resta >= 0 ? Math.round(resta) + ' restantes' : Math.round(-resta) + ' de más') + '</b></span></div>'
+       + '<div class="bar' + (cons > obj ? " over" : "") + '"><i style="width:' + clamp(cons/obj*100,0,100) + '%"></i></div></div>';
+  }
+  return h;
+}
+
+/* ---------- ajustes ---------- */
+function sheetAjustes() {
+  var g = DB.settings.goals;
+  openSheet(
+    '<h2 style="margin-bottom:18px">Ajustes</h2>'
+    + '<div class="eyebrow" style="margin-bottom:12px">Objetivos diarios</div>'
+    + '<div class="grid-2">'
+    + fld("aj-kcal","Calorías",g.kcal,"number") + fld("aj-prot","Proteína (g)",g.prot,"number")
+    + fld("aj-carb","Carbos (g)",g.carb,"number") + fld("aj-fat","Grasas (g)",g.fat,"number")
+    + '</div>'
+    + '<div class="eyebrow" style="margin:8px 0 12px">Estimación por foto (opcional)</div>'
+    + '<div class="field"><label>API key de Google Gemini</label>'
+    + '<input id="aj-key" type="password" placeholder="AIza..." value="' + esc(DB.settings.apiKey) + '" autocomplete="off">'
+    + '<div class="small" style="margin-top:7px;line-height:1.5">Gratuita y sin tarjeta: consíguela en aistudio.google.com → «Get API key». Se guarda solo en este dispositivo y permite estimar los macros de tus fotos automáticamente. Sin ella, introduces los macros a mano.</div></div>'
+    + '<button class="btn" onclick="guardarAjustes()">Guardar</button>'
+    + '<div class="hr"></div>'
+    + '<button class="btn danger" onclick="borrarTodo()">Borrar todos los datos</button>'
+  );
+}
+function fld(id, label, val, type) {
+  return '<div class="field"><label>' + label + '</label><input id="' + id + '" type="' + (type||"text") + '"' + (type==="number"?' inputmode="decimal"':'') + ' value="' + esc(val) + '"></div>';
+}
+function gv(id) { return document.getElementById(id).value.trim(); }
+function gnum(id) { var v = parseFloat(String(gv(id)).replace(",", ".")); return isNaN(v) ? 0 : v; }
+
+function guardarAjustes() {
+  DB.settings.goals = { kcal: gnum("aj-kcal")||2000, prot: gnum("aj-prot")||150, carb: gnum("aj-carb")||200, fat: gnum("aj-fat")||65 };
+  DB.settings.apiKey = gv("aj-key");
+  save(); render(); toast("Ajustes guardados");
+}
+function borrarTodo() {
+  if (!confirm("¿Borrar TODOS los datos? Esta acción no se puede deshacer. Exporta un backup antes si quieres conservarlos.")) return;
+  DB = JSON.parse(JSON.stringify(DEFAULTS)); save(); render(); toast("Datos borrados");
+}
+
+/* ---------- peso corporal ---------- */
+function sheetPeso() {
+  openSheet(
+    '<h2 style="margin-bottom:18px">Registrar peso</h2>'
+    + '<div class="grid-2">' + fld("p-kg","Peso (kg)","","number") + fld("p-fecha","Fecha",todayISO(),"date") + '</div>'
+    + '<button class="btn" onclick="guardarPeso()">Guardar</button>'
+  );
+  setTimeout(function(){ document.getElementById("p-kg").focus(); }, 250);
+}
+function guardarPeso() {
+  var kg = gnum("p-kg"), f = gv("p-fecha") || todayISO();
+  if (!kg || kg < 20 || kg > 400) { toast("Introduce un peso válido"); return; }
+  DB.pesos = DB.pesos.filter(function(p){ return p.fecha !== f; });
+  DB.pesos.push({ fecha: f, kg: kg });
+  save(); render(); toast("Peso guardado");
+}
+
+/* ============================================================
+   VISTA · ENTRENO
+   ============================================================ */
+function viewEntreno() {
+  if (ROUTE.sub === "sesion") return viewSesion();
+  if (ROUTE.sub === "rutina") return viewRutinaEdit(ROUTE.param);
+  if (ROUTE.sub === "ejercicio") return viewEjercicio(ROUTE.param);
+  if (ROUTE.sub === "historial") return viewHistorial();
+
+  var h = '<header class="top"><h1>Entreno</h1>'
+        + '<button class="icon-btn" onclick="nuevaRutina()" aria-label="Nueva rutina">' + icon("mas") + '</button></header>';
+
+  if (DB.activa) {
+    h += '<button class="btn" style="margin-bottom:20px" onclick="go(\'entreno\',\'sesion\')">Continuar sesión · ' + esc(DB.activa.diaNombre) + '</button>';
+  }
+
+  /* rutinas */
+  h += '<div class="section-title"><span class="eyebrow">Rutinas</span></div>';
+  if (!DB.rutinas.length) {
+    h += '<div class="empty">' + icon("entreno",34) + '<p>Crea una rutina con tus días y ejercicios para empezar a registrar sesiones.</p>'
+       + '<button class="btn sm" style="margin:16px auto 0" onclick="nuevaRutina()">Nueva rutina</button></div>';
+  }
+  for (var i = 0; i < DB.rutinas.length; i++) {
+    var r = DB.rutinas[i];
+    h += '<div class="card"><div class="row" style="margin-bottom:12px">'
+       + '<h2>' + esc(r.nombre) + '</h2>'
+       + '<button class="icon-btn" onclick="go(\'entreno\',\'rutina\',\'' + r.id + '\')">' + icon("editar",18) + '</button></div>';
+    for (var j = 0; j < r.dias.length; j++) {
+      var d = r.dias[j];
+      h += '<div class="list-item" style="padding:12px 0">'
+         + '<div class="stack" style="flex:1"><span style="font-weight:500">' + esc(d.nombre) + '</span>'
+         + '<span class="small">' + d.ejercicios.length + ' ejercicios</span></div>'
+         + '<button class="btn sm" onclick="iniciarSesion(\'' + r.id + '\',' + j + ')">Entrenar</button></div>';
+    }
+    h += '</div>';
+  }
+
+  /* historial */
+  h += '<div class="section-title"><span class="eyebrow">Historial</span>'
+     + (DB.sesiones.length ? '<button class="btn quiet" style="width:auto;padding:0" onclick="go(\'entreno\',\'historial\')">Ver todo</button>' : '') + '</div>';
+  var ses = DB.sesiones.slice().sort(byDateAsc).reverse().slice(0, 3);
+  if (!ses.length) h += '<div class="card"><span class="sub">Tus sesiones completadas aparecerán aquí.</span></div>';
+  for (var k = 0; k < ses.length; k++) h += cardSesion(ses[k]);
+
+  /* evolución por ejercicio */
+  var ejercicios = listaEjercicios();
+  if (ejercicios.length) {
+    h += '<div class="section-title"><span class="eyebrow">Evolución por ejercicio</span></div><div class="chips" style="margin-bottom:14px">';
+    for (var e = 0; e < ejercicios.length; e++) {
+      h += '<button class="chip" onclick="go(\'entreno\',\'ejercicio\',\'' + encodeURIComponent(ejercicios[e]) + '\')">' + esc(ejercicios[e]) + '</button>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+
+function cardSesion(s) {
+  var vol = 0, nSer = 0;
+  for (var i = 0; i < s.ejercicios.length; i++)
+    for (var j = 0; j < s.ejercicios[i].series.length; j++) {
+      var st = s.ejercicios[i].series[j];
+      if (st.done) { vol += (st.peso||0) * (st.reps||0); nSer++; }
+    }
+  return '<div class="card"><div class="row"><div class="stack">'
+    + '<h2>' + esc(s.diaNombre) + '</h2>'
+    + '<span class="small">' + fmtFecha(s.fecha, true) + '</span></div>'
+    + '<div class="stack" style="align-items:flex-end"><span class="sub num">' + nSer + ' series</span>'
+    + '<span class="small num">' + Math.round(vol).toLocaleString("es") + ' kg vol.</span></div></div></div>';
+}
+
+function viewHistorial() {
+  var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button><h1 style="margin-bottom:18px">Historial</h1>';
+  var ses = DB.sesiones.slice().sort(byDateAsc).reverse();
+  if (!ses.length) h += '<div class="empty"><p>Todavía no hay sesiones registradas.</p></div>';
+  for (var i = 0; i < ses.length; i++) h += cardSesion(ses[i]);
+  return h;
+}
+
+function listaEjercicios() {
+  var setE = {};
+  for (var i = 0; i < DB.sesiones.length; i++)
+    for (var j = 0; j < DB.sesiones[i].ejercicios.length; j++)
+      setE[DB.sesiones[i].ejercicios[j].nombre] = 1;
+  return Object.keys(setE).sort();
+}
+
+/* ---------- crear / editar rutina ---------- */
+function nuevaRutina() {
+  var r = { id: uid(), nombre: "Nueva rutina", dias: [{ nombre: "Día 1", ejercicios: [] }] };
+  DB.rutinas.push(r); save();
+  go("entreno", "rutina", r.id);
+}
+function getRutina(id) { for (var i=0;i<DB.rutinas.length;i++) if (DB.rutinas[i].id===id) return DB.rutinas[i]; return null; }
+
+function viewRutinaEdit(id) {
+  var r = getRutina(id);
+  if (!r) { go("entreno"); return ""; }
+  var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button>'
+    + '<div class="field"><label>Nombre de la rutina</label>'
+    + '<input value="' + esc(r.nombre) + '" onchange="rNombre(\'' + id + '\',this.value)"></div>';
+  for (var j = 0; j < r.dias.length; j++) {
+    var d = r.dias[j];
+    h += '<div class="card"><div class="row" style="margin-bottom:8px">'
+       + '<input style="font-weight:600;font-size:16px;background:none;padding:4px 0" value="' + esc(d.nombre) + '" onchange="rDiaNombre(\'' + id + '\',' + j + ',this.value)">'
+       + '<button class="icon-btn" onclick="rDelDia(\'' + id + '\',' + j + ')">' + icon("borrar",18) + '</button></div>';
+    for (var e = 0; e < d.ejercicios.length; e++) {
+      var ej = d.ejercicios[e];
+      h += '<div class="list-item" style="padding:11px 0"><div class="stack" style="flex:1">'
+         + '<span style="font-weight:500">' + esc(ej.nombre) + '</span>'
+         + '<span class="small num">' + ej.series + ' × ' + ej.reps + '</span></div>'
+         + '<button class="icon-btn" onclick="rDelEj(\'' + id + '\',' + j + ',' + e + ')">' + icon("borrar",17) + '</button></div>';
+    }
+    h += '<button class="btn ghost sm" style="width:100%;margin-top:10px" onclick="sheetEjercicio(\'' + id + '\',' + j + ')">Añadir ejercicio</button></div>';
+  }
+  h += '<button class="btn ghost" style="margin-bottom:12px" onclick="rAddDia(\'' + id + '\')">Añadir día</button>'
+     + '<button class="btn danger" onclick="rDel(\'' + id + '\')">Eliminar rutina</button>';
+  return h;
+}
+function rNombre(id,v){ var r=getRutina(id); if(r&&v.trim()){r.nombre=v.trim();save();} }
+function rDiaNombre(id,j,v){ var r=getRutina(id); if(r&&v.trim()){r.dias[j].nombre=v.trim();save();} }
+function rAddDia(id){ var r=getRutina(id); r.dias.push({nombre:"Día "+(r.dias.length+1),ejercicios:[]}); save(); render(); }
+function rDelDia(id,j){ var r=getRutina(id); if(!confirm("¿Eliminar «"+r.dias[j].nombre+"»?"))return; r.dias.splice(j,1); save(); render(); }
+function rDelEj(id,j,e){ var r=getRutina(id); r.dias[j].ejercicios.splice(e,1); save(); render(); }
+function rDel(id){ if(!confirm("¿Eliminar la rutina completa? Las sesiones ya registradas se conservan."))return; DB.rutinas=DB.rutinas.filter(function(r){return r.id!==id;}); save(); go("entreno"); }
+
+function sheetEjercicio(id, j) {
+  openSheet(
+    '<h2 style="margin-bottom:18px">Añadir ejercicio</h2>'
+    + fld("e-nombre","Ejercicio","")
+    + '<div class="grid-2">' + fld("e-series","Series objetivo",4,"number") + fld("e-reps","Reps objetivo",10,"number") + '</div>'
+    + '<button class="btn" onclick="guardarEjercicio(\'' + id + '\',' + j + ')">Añadir</button>'
+  );
+  setTimeout(function(){ document.getElementById("e-nombre").focus(); }, 250);
+}
+function guardarEjercicio(id, j) {
+  var n = gv("e-nombre");
+  if (!n) { toast("Escribe el nombre del ejercicio"); return; }
+  getRutina(id).dias[j].ejercicios.push({ nombre: n, series: gnum("e-series")||4, reps: gnum("e-reps")||10 });
+  save(); render();
+}
+
+/* ---------- sesión activa ---------- */
+function iniciarSesion(rutinaId, diaIdx) {
+  if (DB.activa && !confirm("Hay una sesión en curso. ¿Descartarla y empezar otra?")) { go("entreno","sesion"); return; }
+  var r = getRutina(rutinaId), d = r.dias[diaIdx];
+  var ejercicios = [];
+  for (var i = 0; i < d.ejercicios.length; i++) {
+    var ej = d.ejercicios[i], series = [];
+    var prev = ultimaSerieDe(ej.nombre); // sugerir peso anterior
+    for (var s = 0; s < ej.series; s++) series.push({ peso: prev ? prev.peso : "", reps: ej.reps, done: false });
+    ejercicios.push({ nombre: ej.nombre, objetivo: ej.series + " × " + ej.reps, series: series });
+  }
+  DB.activa = { id: uid(), fecha: todayISO(), rutinaNombre: r.nombre, diaNombre: d.nombre, ejercicios: ejercicios };
+  save(); go("entreno", "sesion");
+}
+
+function ultimaSerieDe(nombre) {
+  var ses = DB.sesiones.slice().sort(byDateAsc);
+  for (var i = ses.length - 1; i >= 0; i--)
+    for (var j = 0; j < ses[i].ejercicios.length; j++)
+      if (ses[i].ejercicios[j].nombre === nombre) {
+        var mejores = ses[i].ejercicios[j].series.filter(function(s){ return s.done && s.peso; });
+        if (mejores.length) return mejores[mejores.length-1];
+      }
+  return null;
+}
+
+function viewSesion() {
+  var a = DB.activa;
+  if (!a) { go("entreno"); return ""; }
+  var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button>'
+    + '<div class="stack" style="margin-bottom:20px"><span class="eyebrow">Sesión en curso · ' + fmtFecha(a.fecha) + '</span>'
+    + '<h1>' + esc(a.diaNombre) + '</h1></div>';
+  for (var i = 0; i < a.ejercicios.length; i++) {
+    var ej = a.ejercicios[i];
+    var prev = ultimaSerieDe(ej.nombre);
+    h += '<div class="card"><div class="row" style="margin-bottom:10px"><div class="stack">'
+       + '<h2>' + esc(ej.nombre) + '</h2>'
+       + '<span class="small num">Objetivo ' + ej.objetivo + (prev ? ' · última vez ' + prev.peso + ' kg × ' + prev.reps : '') + '</span></div>'
+       + '<button class="icon-btn" onclick="sAddSerie(' + i + ')">' + icon("mas",18) + '</button></div>'
+       + '<div class="set-head"><span>#</span><span>kg</span><span>reps</span><span></span></div>';
+    for (var s = 0; s < ej.series.length; s++) {
+      var st = ej.series[s];
+      h += '<div class="set-row"><span class="idx">' + (s+1) + '</span>'
+         + '<input inputmode="decimal" value="' + esc(st.peso) + '" onchange="sVal(' + i + ',' + s + ',\'peso\',this.value)">'
+         + '<input inputmode="numeric" value="' + esc(st.reps) + '" onchange="sVal(' + i + ',' + s + ',\'reps\',this.value)">'
+         + '<button class="check' + (st.done ? ' on' : '') + '" onclick="sDone(' + i + ',' + s + ')">' + icon("ok",18) + '</button></div>';
+    }
+    h += '</div>';
+  }
+  h += '<button class="btn" style="margin-top:6px" onclick="finalizarSesion()">Finalizar sesión</button>'
+     + '<button class="btn quiet" onclick="descartarSesion()">Descartar sesión</button>';
+  return h;
+}
+function sVal(i, s, campo, v) {
+  var num = parseFloat(String(v).replace(",", "."));
+  DB.activa.ejercicios[i].series[s][campo] = isNaN(num) ? "" : num;
+  save();
+}
+function sDone(i, s) {
+  var st = DB.activa.ejercicios[i].series[s];
+  st.done = !st.done; save(); render();
+}
+function sAddSerie(i) {
+  var ser = DB.activa.ejercicios[i].series;
+  var last = ser[ser.length-1] || { peso: "", reps: 10 };
+  ser.push({ peso: last.peso, reps: last.reps, done: false });
+  save(); render();
+}
+function finalizarSesion() {
+  var a = DB.activa, alguna = false;
+  for (var i = 0; i < a.ejercicios.length; i++) {
+    a.ejercicios[i].series = a.ejercicios[i].series.filter(function(s){ return s.done; });
+    if (a.ejercicios[i].series.length) alguna = true;
+  }
+  if (!alguna) { toast("Marca al menos una serie completada"); return; }
+  a.ejercicios = a.ejercicios.filter(function(e){ return e.series.length; });
+  DB.sesiones.push(a); DB.activa = null;
+  save(); go("entreno"); toast("Sesión guardada");
+}
+function descartarSesion() {
+  if (!confirm("¿Descartar la sesión en curso? No se guardará nada.")) return;
+  DB.activa = null; save(); go("entreno");
+}
+
+/* ---------- detalle de ejercicio ---------- */
+function viewEjercicio(param) {
+  var nombre = decodeURIComponent(param);
+  var datos = [];
+  var ses = DB.sesiones.slice().sort(byDateAsc);
+  for (var i = 0; i < ses.length; i++)
+    for (var j = 0; j < ses[i].ejercicios.length; j++)
+      if (ses[i].ejercicios[j].nombre === nombre) {
+        var series = ses[i].ejercicios[j].series.filter(function(s){ return s.done && s.peso; });
+        if (!series.length) continue;
+        var maxP = Math.max.apply(null, series.map(function(s){ return s.peso; }));
+        var repsMax = series.filter(function(s){ return s.peso === maxP; })[0].reps;
+        datos.push({ fecha: ses[i].fecha, max: maxP, reps: repsMax, series: series });
+      }
+  var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button>'
+    + '<div class="stack" style="margin-bottom:18px"><span class="eyebrow">Evolución</span><h1>' + esc(nombre) + '</h1></div>';
+  if (!datos.length) return h + '<div class="empty"><p>Sin registros todavía para este ejercicio.</p></div>';
+
+  var primero = datos[0].max, ultimo = datos[datos.length-1].max;
+  var pr = Math.max.apply(null, datos.map(function(d){ return d.max; }));
+  var dif = n1(ultimo - primero);
+  h += '<div class="card">'
+     + '<div class="grid-2" style="margin-bottom:6px">'
+     + '<div class="stack"><span class="eyebrow">Máximo (PR)</span><span class="big-num">' + n1(pr) + ' <span class="sub" style="font-size:15px">kg</span></span></div>'
+     + '<div class="stack"><span class="eyebrow">Progreso total</span><span class="big-num ' + (dif>0?"trend-up":dif<0?"trend-down":"trend-flat") + '">' + Math.abs(dif) + ' <span class="sub" style="font-size:15px">kg</span></span></div>'
+     + '</div>'
+     + lineChart(datos.map(function(d){ return { fecha: d.fecha, v: d.max }; }), { h: 160 })
+     + '</div>';
+  h += '<div class="section-title"><span class="eyebrow">Registros</span></div><div class="card">';
+  for (var k = datos.length - 1; k >= 0; k--) {
+    var d = datos[k];
+    var det = d.series.map(function(s){ return s.peso + '×' + s.reps; }).join("  ");
+    h += '<div class="list-item"><div class="stack" style="flex:1"><span style="font-weight:500" class="num">' + n1(d.max) + ' kg máx.</span>'
+       + '<span class="small num">' + det + '</span></div>'
+       + '<span class="small">' + fmtFecha(d.fecha) + '</span></div>';
+  }
+  return h + '</div>';
+}
+/* ============================================================
+   VISTA · COMIDA
+   ============================================================ */
+var DIA_COMIDA = todayISO(); // día que se está viendo
+
+function viewComida() {
+  var f = DIA_COMIDA, g = DB.settings.goals, m = macrosDia(f), r = restantes(f);
+  var esHoy = f === todayISO();
+  var h = '<header class="top"><h1>Comida</h1><span class="date">' + (esHoy ? "hoy" : fmtFecha(f, true)) + '</span></header>';
+
+  /* navegación de días */
+  h += '<div class="row" style="margin-bottom:16px">'
+     + '<button class="icon-btn" onclick="cambiarDia(-1)">' + icon("atras",18) + '</button>'
+     + '<span class="sub" style="font-weight:500">' + fmtFecha(f, true) + '</span>'
+     + '<button class="icon-btn" ' + (esHoy ? 'disabled style="opacity:.25"' : 'onclick="cambiarDia(1)"') + '>'
+     + icon("atras",18).replace('M14.5 6 9 12l5.5 6','M9.5 6 15 12l-5.5 6') + '</button></div>';
+
+  /* resumen restantes */
+  h += '<div class="card"><div class="row" style="margin-bottom:14px">'
+     + '<div class="stack"><span class="eyebrow">' + (r.kcal>=0?'Restantes':'Excedido') + '</span>'
+     + '<span class="big-num">' + Math.abs(Math.round(r.kcal)) + ' <span class="sub" style="font-size:15px">kcal</span></span></div>'
+     + '<div class="stack" style="align-items:flex-end"><span class="small num">consumidas ' + Math.round(m.kcal) + '</span>'
+     + '<span class="small num">objetivo ' + g.kcal + '</span></div></div>'
+     + macroBars(m, g) + '</div>';
+
+  /* recomendación */
+  if (esHoy && r.kcal > 60) {
+    var recs = recomendar(r);
+    if (recs.length) {
+      h += '<div class="card" style="background:none;border-style:dashed">'
+         + '<div class="row" style="margin-bottom:8px"><span class="eyebrow">Para completar el día</span>' + '<span style="color:var(--ink-3)">' + icon("chispa",16) + '</span></div>';
+      for (var i = 0; i < recs.length; i++) {
+        h += '<div class="small" style="line-height:1.7;color:var(--ink-2)">· ' + recs[i] + '</div>';
+      }
+      h += '</div>';
+    }
+  }
+
+  /* botones añadir */
+  h += '<div class="grid-2" style="margin:4px 0 8px">'
+     + '<button class="btn" onclick="sheetComida()">' + icon("foto",18) + ' Añadir comida</button>'
+     + '<button class="btn ghost" onclick="sheetFrecuentes()">' + icon("repetir",18) + ' Frecuentes</button></div>';
+
+  /* comidas del día */
+  h += '<div class="section-title"><span class="eyebrow">Registro del día</span></div>';
+  var cs = m.comidas.slice().sort(function(a,b){ return (a.hora||"") < (b.hora||"") ? -1 : 1; });
+  if (!cs.length) h += '<div class="empty">' + icon("comida",32) + '<p>Nada registrado este día. Añade tu primera comida con una foto o desde frecuentes.</p></div>';
+  else {
+    h += '<div class="card">';
+    for (var j = 0; j < cs.length; j++) {
+      var c = cs[j];
+      h += '<div class="list-item">'
+         + (c.foto ? '<img class="thumb" src="' + c.foto + '" alt="">' : '<div class="thumb">' + icon("comida",20) + '</div>')
+         + '<div class="stack" style="flex:1;min-width:0"><span style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(c.nombre) + '</span>'
+         + '<span class="small num">' + Math.round(c.kcal) + ' kcal · P' + Math.round(c.prot) + ' · C' + Math.round(c.carb) + ' · G' + Math.round(c.fat) + (c.hora ? ' · ' + c.hora : '') + '</span></div>'
+         + '<button class="icon-btn" onclick="delComida(\'' + c.id + '\')">' + icon("borrar",17) + '</button></div>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+
+function cambiarDia(dir) {
+  var pt = DIA_COMIDA.split("-");
+  var d = new Date(+pt[0], +pt[1]-1, +pt[2]); d.setDate(d.getDate() + dir);
+  if (todayISO(d) > todayISO()) return;
+  DIA_COMIDA = todayISO(d); render();
+}
+function delComida(id) {
+  if (!confirm("¿Eliminar esta comida del registro?")) return;
+  DB.comidas = DB.comidas.filter(function(c){ return c.id !== id; });
+  save(); render();
+}
+
+/* ---------- añadir comida ---------- */
+var FOTO_TMP = null;
+
+function sheetComida(pre) {
+  FOTO_TMP = (pre && pre.foto) || null;
+  var tieneKey = !!DB.settings.apiKey;
+  openSheet(
+    '<h2 style="margin-bottom:18px">Añadir comida</h2>'
+    + '<input id="c-file" type="file" accept="image/*" capture="environment" style="display:none" onchange="fotoElegida(this)">'
+    + '<div id="c-fotobox">' + fotoBoxHTML() + '</div>'
+    + (tieneKey ? '<button id="c-ia" class="btn ghost" style="margin-bottom:16px" onclick="estimarIA()" ' + (FOTO_TMP?'':'disabled') + '>' + icon("chispa",17) + ' Estimar macros con IA</button>' : '')
+    + fld("c-nombre","Nombre", pre ? pre.nombre : "")
+    + '<div class="grid-4">'
+    + fldMini("c-kcal","kcal", pre?pre.kcal:"") + fldMini("c-prot","prot", pre?pre.prot:"")
+    + fldMini("c-carb","carb", pre?pre.carb:"") + fldMini("c-fat","gras", pre?pre.fat:"")
+    + '</div>'
+    + '<label class="row" style="margin:4px 0 18px;justify-content:flex-start;gap:10px">'
+    + '<input id="c-frec" type="checkbox" style="width:19px;height:19px;accent-color:var(--ink)">'
+    + '<span class="sub">Guardar en frecuentes</span></label>'
+    + '<button class="btn" onclick="guardarComida()">Guardar comida</button>'
+    + (!tieneKey ? '<div class="small" style="margin-top:12px;text-align:center;line-height:1.5">Añade tu API key gratuita de Gemini en Ajustes para estimar los macros de la foto automáticamente.</div>' : '')
+  );
+}
+function fldMini(id, label, val) {
+  return '<div class="field" style="margin-bottom:14px"><label style="text-align:center">' + label + '</label>'
+       + '<input id="' + id + '" inputmode="decimal" style="text-align:center;padding:12px 6px" value="' + esc(val||"") + '"></div>';
+}
+function fotoBoxHTML() {
+  if (FOTO_TMP) return '<div style="position:relative;margin-bottom:16px">'
+    + '<img src="' + FOTO_TMP + '" style="width:100%;border-radius:14px;display:block;max-height:220px;object-fit:cover">'
+    + '<button class="btn sm" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);color:#fff" onclick="document.getElementById(\'c-file\').click()">Cambiar</button></div>';
+  return '<button class="btn ghost" style="margin-bottom:16px;padding:26px;border-style:dashed" onclick="document.getElementById(\'c-file\').click()">' + icon("foto",20) + ' Hacer o elegir foto</button>';
+}
+function fotoElegida(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    comprimir(e.target.result, function(dataUrl) {
+      FOTO_TMP = dataUrl;
+      var box = document.getElementById("c-fotobox");
+      if (box) box.innerHTML = fotoBoxHTML();
+      var ia = document.getElementById("c-ia");
+      if (ia) ia.disabled = false;
+    });
+  };
+  reader.readAsDataURL(file);
+}
+function comprimir(src, cb) {
+  var img = new Image();
+  img.onload = function() {
+    var MAX = 520, esc = Math.min(1, MAX / Math.max(img.width, img.height));
+    var cv = document.createElement("canvas");
+    cv.width = Math.round(img.width * esc); cv.height = Math.round(img.height * esc);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    cb(cv.toDataURL("image/jpeg", 0.62));
+  };
+  img.src = src;
+}
+
+function guardarComida() {
+  var nombre = gv("c-nombre") || "Comida";
+  var c = { id: uid(), fecha: DIA_COMIDA, hora: nowHM(), nombre: nombre,
+            kcal: gnum("c-kcal"), prot: gnum("c-prot"), carb: gnum("c-carb"), fat: gnum("c-fat"), foto: FOTO_TMP };
+  if (!c.kcal && !c.prot && !c.carb && !c.fat) { toast("Introduce al menos un valor de macros"); return; }
+  DB.comidas.push(c);
+  if (document.getElementById("c-frec").checked) {
+    DB.frecuentes.push({ id: uid(), nombre: nombre, kcal: c.kcal, prot: c.prot, carb: c.carb, fat: c.fat, foto: FOTO_TMP });
+  }
+  FOTO_TMP = null; save(); render(); toast("Comida registrada");
+}
+
+/* ---------- estimación con IA (Google Gemini, capa gratuita) ----------
+   Función aislada: si en el futuro se quiere conectar otro motor
+   de visión, basta con sustituir el cuerpo de estimateMacrosFromPhoto.
+   La key se obtiene gratis (sin tarjeta) en https://aistudio.google.com */
+function estimateMacrosFromPhoto(dataUrl) {
+  var base64 = dataUrl.split(",")[1];
+  var media = dataUrl.indexOf("image/png") > -1 ? "image/png" : "image/jpeg";
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": DB.settings.apiKey
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [
+        { inline_data: { mime_type: media, data: base64 } },
+        { text: "Estima los macros de esta comida. Responde SOLO con JSON válido, sin texto adicional ni markdown: {\"nombre\":\"nombre corto del plato en español\",\"kcal\":number,\"prot\":number,\"carb\":number,\"fat\":number}. Valores para la ración completa visible." }
+      ]}],
+      generationConfig: { responseMimeType: "application/json" }
+    })
+  }).then(function(res) {
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }).then(function(data) {
+    var txt = "";
+    var parts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || [];
+    for (var i = 0; i < parts.length; i++) if (parts[i].text) txt += parts[i].text;
+    txt = txt.replace(/```json|```/g, "").trim();
+    return JSON.parse(txt);
+  });
+}
+
+function estimarIA() {
+  if (!FOTO_TMP) { toast("Añade una foto primero"); return; }
+  var btn = document.getElementById("c-ia");
+  btn.disabled = true; btn.innerHTML = '<span class="spin dark"></span> Analizando foto…';
+  estimateMacrosFromPhoto(FOTO_TMP).then(function(r) {
+    if (r.nombre && !gv("c-nombre")) document.getElementById("c-nombre").value = r.nombre;
+    document.getElementById("c-kcal").value = Math.round(r.kcal || 0);
+    document.getElementById("c-prot").value = Math.round(r.prot || 0);
+    document.getElementById("c-carb").value = Math.round(r.carb || 0);
+    document.getElementById("c-fat").value  = Math.round(r.fat  || 0);
+    btn.disabled = false; btn.innerHTML = icon("chispa",17) + ' Estimar de nuevo';
+    toast("Estimación lista — revísala y ajusta si hace falta");
+  }).catch(function(e) {
+    btn.disabled = false; btn.innerHTML = icon("chispa",17) + ' Estimar macros con IA';
+    toast("No se pudo estimar (" + e.message + "). Comprueba tu API key de Gemini.");
+  });
+}
+
+/* ---------- frecuentes ---------- */
+function sheetFrecuentes() {
+  var h = '<h2 style="margin-bottom:18px">Comidas frecuentes</h2>';
+  if (!DB.frecuentes.length) h += '<div class="empty" style="padding:24px"><p>Cuando guardes una comida marcando «guardar en frecuentes», aparecerá aquí para repetirla con un toque.</p></div>';
+  for (var i = 0; i < DB.frecuentes.length; i++) {
+    var f = DB.frecuentes[i];
+    h += '<div class="list-item">'
+       + (f.foto ? '<img class="thumb" src="' + f.foto + '" alt="">' : '<div class="thumb">' + icon("comida",20) + '</div>')
+       + '<div class="stack" style="flex:1;min-width:0"><span style="font-weight:500">' + esc(f.nombre) + '</span>'
+       + '<span class="small num">' + Math.round(f.kcal) + ' kcal · P' + Math.round(f.prot) + ' · C' + Math.round(f.carb) + ' · G' + Math.round(f.fat) + '</span></div>'
+       + '<button class="btn sm" onclick="repetirFrec(\'' + f.id + '\')">Añadir</button>'
+       + '<button class="icon-btn" onclick="delFrec(\'' + f.id + '\')">' + icon("borrar",16) + '</button></div>';
+  }
+  openSheet(h);
+}
+function repetirFrec(id) {
+  var f = DB.frecuentes.filter(function(x){ return x.id === id; })[0];
+  if (!f) return;
+  DB.comidas.push({ id: uid(), fecha: DIA_COMIDA, hora: nowHM(), nombre: f.nombre, kcal: f.kcal, prot: f.prot, carb: f.carb, fat: f.fat, foto: f.foto });
+  save(); render(); toast("«" + f.nombre + "» añadida");
+}
+function delFrec(id) {
+  DB.frecuentes = DB.frecuentes.filter(function(x){ return x.id !== id; });
+  save(); sheetFrecuentes();
+}
+
+/* ---------- recomendaciones ----------
+   Base sencilla de alimentos (por ración) para sugerir cómo
+   completar los macros restantes del día. */
+var ALIMENTOS = [
+  { n: "Pechuga de pollo (150 g)",   kcal: 248, prot: 46, carb: 0,  fat: 5 },
+  { n: "Yogur griego natural (2)",   kcal: 190, prot: 18, carb: 8,  fat: 10 },
+  { n: "Lata de atún al natural",    kcal: 100, prot: 23, carb: 0,  fat: 1 },
+  { n: "3 huevos",                   kcal: 215, prot: 19, carb: 1,  fat: 15 },
+  { n: "Claras de huevo (200 ml)",   kcal: 100, prot: 22, carb: 1,  fat: 0 },
+  { n: "Batido de proteína",         kcal: 120, prot: 24, carb: 3,  fat: 2 },
+  { n: "Arroz cocido (200 g)",       kcal: 260, prot: 5,  carb: 56, fat: 1 },
+  { n: "Pasta cocida (200 g)",       kcal: 262, prot: 10, carb: 50, fat: 2 },
+  { n: "Patata cocida (250 g)",      kcal: 215, prot: 5,  carb: 48, fat: 0 },
+  { n: "Pan integral (2 rebanadas)", kcal: 160, prot: 7,  carb: 28, fat: 2 },
+  { n: "Plátano",                    kcal: 105, prot: 1,  carb: 27, fat: 0 },
+  { n: "Avena (60 g)",               kcal: 228, prot: 8,  carb: 40, fat: 4 },
+  { n: "Aguacate (½)",               kcal: 160, prot: 2,  carb: 8,  fat: 15 },
+  { n: "Puñado de nueces (30 g)",    kcal: 196, prot: 5,  carb: 4,  fat: 20 },
+  { n: "Aceite de oliva (1 cda)",    kcal: 119, prot: 0,  carb: 0,  fat: 13 },
+  { n: "Queso fresco batido (250 g)",kcal: 175, prot: 30, carb: 10, fat: 1 },
+  { n: "Salmón (125 g)",             kcal: 260, prot: 25, carb: 0,  fat: 17 },
+  { n: "Ternera magra (150 g)",      kcal: 250, prot: 40, carb: 0,  fat: 9 }
+];
+
+function recomendar(r) {
+  // qué macro va más retrasado en proporción
+  var g = DB.settings.goals;
+  var deficit = [
+    { k: "prot", pct: r.prot / (g.prot || 1), label: "proteína" },
+    { k: "carb", pct: r.carb / (g.carb || 1), label: "carbohidratos" },
+    { k: "fat",  pct: r.fat  / (g.fat  || 1), label: "grasas" }
+  ].sort(function(a,b){ return b.pct - a.pct; });
+  var foco = deficit[0];
+  if (foco.pct <= 0.05) return ["Vas al día con tus macros. Si tienes hambre, algo ligero y saciante: verdura, café o infusión."];
+
+  var out = ["Te quedan <b class=\"num\">" + Math.max(0,Math.round(r.prot)) + "g proteína · " + Math.max(0,Math.round(r.carb)) + "g carbos · " + Math.max(0,Math.round(r.fat)) + "g grasas</b> (" + Math.max(0,Math.round(r.kcal)) + " kcal). Lo más retrasado: " + foco.label + "."];
+
+  // puntuar alimentos: cubrir el macro foco sin pasarse de kcal
+  var candidatos = ALIMENTOS.map(function(a) {
+    var aporte = a[foco.k];
+    var penal = Math.max(0, a.kcal - r.kcal) * 2;         // pasarse de kcal penaliza
+    ["prot","carb","fat"].forEach(function(k){ penal += Math.max(0, a[k] - Math.max(0,r[k])) * 3; });
+    return { a: a, score: aporte * 3 - penal };
+  }).filter(function(c){ return c.score > 0; })
+    .sort(function(x,y){ return y.score - x.score; })
+    .slice(0, 3);
+
+  for (var i = 0; i < candidatos.length; i++) {
+    var a = candidatos[i].a;
+    out.push(esc(a.n) + ' — <span class="num">' + a.kcal + ' kcal · P' + a.prot + ' · C' + a.carb + ' · G' + a.fat + '</span>');
+  }
+  return out;
+}
+/* ============================================================
+   VISTA · INFORMES / EXPORTACIÓN
+   ============================================================ */
+function viewInformes() {
+  var h = '<header class="top"><h1>Informes</h1></header>';
+
+  h += '<div class="card"><div class="stack" style="margin-bottom:14px">'
+     + '<h2>Histórico completo para IA</h2>'
+     + '<span class="sub">Todo tu registro (entrenos, pesos, comidas y macros) en texto estructurado, listo para pegar en una conversación y pedir un análisis de tu progreso.</span></div>'
+     + '<div class="grid-2">'
+     + '<button class="btn" onclick="copyText(informeCompleto(),\'Histórico copiado\')">' + icon("copiar",17) + ' Copiar</button>'
+     + '<button class="btn ghost" onclick="download(\'bitacora-historico-' + todayISO() + '.txt\', informeCompleto(), \'text/plain\')">' + icon("descargar",17) + ' Descargar</button>'
+     + '</div></div>';
+
+  h += '<div class="card"><div class="stack" style="margin-bottom:14px">'
+     + '<h2>Informe de progreso por ejercicio</h2>'
+     + '<span class="sub">Resumen de evolución o estancamiento de cada ejercicio: primer peso, último, PR y tendencia.</span></div>'
+     + '<button class="btn ghost" onclick="verInforme()">Ver y copiar</button></div>';
+
+  h += '<div class="section-title"><span class="eyebrow">Copia de seguridad</span></div>'
+     + '<div class="card"><div class="stack" style="margin-bottom:14px">'
+     + '<span class="sub">Exporta un backup completo (JSON) e impórtalo en cualquier momento o dispositivo para no perder nada.</span></div>'
+     + '<div class="grid-2">'
+     + '<button class="btn ghost" onclick="download(\'bitacora-backup-' + todayISO() + '.json\', JSON.stringify(DB, null, 2))">' + icon("descargar",17) + ' Exportar</button>'
+     + '<button class="btn ghost" onclick="document.getElementById(\'imp-file\').click()">Importar</button>'
+     + '</div>'
+     + '<input id="imp-file" type="file" accept=".json,application/json" style="display:none" onchange="importarBackup(this)"></div>';
+
+  /* resumen rápido de volumen de datos */
+  h += '<div class="small" style="text-align:center;margin-top:8px">'
+     + DB.sesiones.length + ' sesiones · ' + DB.comidas.length + ' comidas · ' + DB.pesos.length + ' pesajes registrados</div>';
+  return h;
+}
+
+function verInforme() {
+  var txt = informeEjercicios();
+  openSheet(
+    '<h2 style="margin-bottom:14px">Progreso por ejercicio</h2>'
+    + '<div class="mono">' + esc(txt) + '</div>'
+    + '<button class="btn" style="margin-top:16px" onclick="copyText(informeEjercicios(),\'Informe copiado\')">' + icon("copiar",17) + ' Copiar informe</button>'
+  );
+}
+
+/* ---------- generadores de texto ---------- */
+function informeEjercicios() {
+  var nombres = listaEjercicios();
+  if (!nombres.length) return "Sin sesiones registradas todavía.";
+  var lineas = ["INFORME DE PROGRESO POR EJERCICIO — " + fmtFecha(todayISO(), true), ""];
+  var ses = DB.sesiones.slice().sort(byDateAsc);
+  for (var n = 0; n < nombres.length; n++) {
+    var nombre = nombres[n], regs = [];
+    for (var i = 0; i < ses.length; i++)
+      for (var j = 0; j < ses[i].ejercicios.length; j++)
+        if (ses[i].ejercicios[j].nombre === nombre) {
+          var done = ses[i].ejercicios[j].series.filter(function(s){ return s.done && s.peso; });
+          if (done.length) regs.push({ fecha: ses[i].fecha, max: Math.max.apply(null, done.map(function(s){return s.peso;})) });
+        }
+    if (!regs.length) continue;
+    var primero = regs[0], ultimo = regs[regs.length-1];
+    var pr = Math.max.apply(null, regs.map(function(r){ return r.max; }));
+    var dif = n1(ultimo.max - primero.max);
+    // tendencia reciente: últimos 4 registros
+    var rec = regs.slice(-4), tend = "estable";
+    if (rec.length >= 2) {
+      var d2 = rec[rec.length-1].max - rec[0].max;
+      tend = d2 > 0.5 ? "progresando" : d2 < -0.5 ? "retrocediendo" : (regs.length >= 3 ? "estancado" : "estable");
+    }
+    lineas.push("• " + nombre);
+    lineas.push("   " + regs.length + " sesiones · " + primero.max + " kg (" + fmtFecha(primero.fecha) + ") → " + ultimo.max + " kg (" + fmtFecha(ultimo.fecha) + ")");
+    lineas.push("   PR: " + pr + " kg · cambio total: " + (dif >= 0 ? "+" : "") + dif + " kg · tendencia reciente: " + tend);
+    lineas.push("");
+  }
+  return lineas.join("\n");
+}
+
+function informeCompleto() {
+  var g = DB.settings.goals;
+  var L = [];
+  L.push("HISTÓRICO PERSONAL DE ENTRENAMIENTO Y ALIMENTACIÓN");
+  L.push("Exportado: " + fmtFecha(todayISO(), true));
+  L.push("Objetivos diarios: " + g.kcal + " kcal · " + g.prot + "g proteína · " + g.carb + "g carbohidratos · " + g.fat + "g grasas");
+  L.push("");
+
+  L.push("== PESO CORPORAL ==");
+  var ps = DB.pesos.slice().sort(byDateAsc);
+  if (!ps.length) L.push("(sin registros)");
+  for (var i = 0; i < ps.length; i++) L.push(ps[i].fecha + ": " + ps[i].kg + " kg");
+  L.push("");
+
+  L.push("== SESIONES DE ENTRENAMIENTO ==");
+  var ses = DB.sesiones.slice().sort(byDateAsc);
+  if (!ses.length) L.push("(sin registros)");
+  for (var s = 0; s < ses.length; s++) {
+    var x = ses[s];
+    L.push(x.fecha + " — " + x.rutinaNombre + " / " + x.diaNombre);
+    for (var e = 0; e < x.ejercicios.length; e++) {
+      var ej = x.ejercicios[e];
+      var det = ej.series.map(function(st){ return st.peso + "kg×" + st.reps; }).join(", ");
+      L.push("   " + ej.nombre + ": " + det);
+    }
+  }
+  L.push("");
+
+  L.push("== PROGRESO POR EJERCICIO ==");
+  L.push(informeEjercicios());
+
+  L.push("== ALIMENTACIÓN (por día) ==");
+  var dias = {};
+  for (var c = 0; c < DB.comidas.length; c++) {
+    var cm = DB.comidas[c];
+    (dias[cm.fecha] = dias[cm.fecha] || []).push(cm);
+  }
+  var fechas = Object.keys(dias).sort();
+  if (!fechas.length) L.push("(sin registros)");
+  for (var f = 0; f < fechas.length; f++) {
+    var arr = dias[fechas[f]];
+    var tk = sum(arr,function(c){return c.kcal;}), tp = sum(arr,function(c){return c.prot;}),
+        tc = sum(arr,function(c){return c.carb;}), tg = sum(arr,function(c){return c.fat;});
+    L.push(fechas[f] + " — total: " + Math.round(tk) + " kcal · P" + Math.round(tp) + " · C" + Math.round(tc) + " · G" + Math.round(tg));
+    for (var a = 0; a < arr.length; a++) {
+      var it = arr[a];
+      L.push("   " + (it.hora||"") + " " + it.nombre + " (" + Math.round(it.kcal) + " kcal · P" + Math.round(it.prot) + " · C" + Math.round(it.carb) + " · G" + Math.round(it.fat) + ")");
+    }
+  }
+  L.push("");
+  L.push("---");
+  L.push("Instrucción sugerida para la IA: analiza mi progreso de fuerza por ejercicio, la evolución de mi peso corporal y mi adherencia a los objetivos de macros. Señala estancamientos, patrones y recomendaciones concretas.");
+  return L.join("\n");
+}
+
+function importarBackup(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var d = JSON.parse(e.target.result);
+      if (!d || typeof d !== "object" || !("comidas" in d) || !("sesiones" in d)) throw new Error("formato");
+      if (!confirm("Esto sustituirá los datos actuales por los del backup. ¿Continuar?")) return;
+      for (var k in DEFAULTS) if (!(k in d)) d[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
+      DB = d; save(); render(); toast("Backup importado");
+    } catch (err) { toast("El archivo no es un backup válido"); }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+
+/* ============================================================
+   ARRANQUE
+   ============================================================ */
+render();
+</script>
+</body>
+</html>
