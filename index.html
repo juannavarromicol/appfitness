@@ -634,9 +634,12 @@ function viewRutinaEdit(id) {
        + '<button class="icon-btn" onclick="rDelDia(\'' + id + '\',' + j + ')">' + icon("borrar",18) + '</button></div>';
     for (var e = 0; e < d.ejercicios.length; e++) {
       var ej = d.ejercicios[e];
-      h += '<div class="list-item" style="padding:11px 0"><div class="stack" style="flex:1">'
+      var enSS = ej.link || (d.ejercicios[e+1] && d.ejercicios[e+1].link);
+      if (enSS && !ej.link) h += '<div class="eyebrow" style="margin-top:12px">Superserie</div>';
+      h += '<div class="list-item" style="padding:11px 0' + (enSS ? ';border-left:2.5px solid var(--ink);padding-left:12px' : '') + '">'
+         + '<div class="stack" style="flex:1" onclick="sheetEjercicio(\'' + id + '\',' + j + ',' + e + ')">'
          + '<span style="font-weight:500">' + esc(ej.nombre) + '</span>'
-         + '<span class="small num">' + ej.series + ' × ' + ej.reps + '</span></div>'
+         + '<span class="small num">' + ej.series + ' × ' + ej.reps + (ej.link ? ' · en superserie con el anterior' : '') + '</span></div>'
          + '<button class="icon-btn" onclick="rDelEj(\'' + id + '\',' + j + ',' + e + ')">' + icon("borrar",17) + '</button></div>';
     }
     h += '<button class="btn ghost sm" style="width:100%;margin-top:10px" onclick="sheetEjercicio(\'' + id + '\',' + j + ')">Añadir ejercicio</button></div>';
@@ -652,19 +655,29 @@ function rDelDia(id,j){ var r=getRutina(id); if(!confirm("¿Eliminar «"+r.dias[
 function rDelEj(id,j,e){ var r=getRutina(id); r.dias[j].ejercicios.splice(e,1); save(); render(); }
 function rDel(id){ if(!confirm("¿Eliminar la rutina completa? Las sesiones ya registradas se conservan."))return; DB.rutinas=DB.rutinas.filter(function(r){return r.id!==id;}); save(); go("entreno"); }
 
-function sheetEjercicio(id, j) {
+function sheetEjercicio(id, j, e) {
+  var edit = typeof e === "number";
+  var d = getRutina(id).dias[j];
+  var ej = edit ? d.ejercicios[e] : { nombre: "", series: 4, reps: 10, link: false };
+  var puedeSS = edit ? e > 0 : d.ejercicios.length > 0;
   openSheet(
-    '<h2 style="margin-bottom:18px">Añadir ejercicio</h2>'
-    + fld("e-nombre","Ejercicio","")
-    + '<div class="grid-2">' + fld("e-series","Series objetivo",4,"number") + fld("e-reps","Reps objetivo",10,"number") + '</div>'
-    + '<button class="btn" onclick="guardarEjercicio(\'' + id + '\',' + j + ')">Añadir</button>'
+    '<h2 style="margin-bottom:18px">' + (edit ? 'Editar' : 'Añadir') + ' ejercicio</h2>'
+    + fld("e-nombre","Ejercicio",ej.nombre)
+    + '<div class="grid-2">' + fld("e-series","Series objetivo",ej.series,"number") + fld("e-reps","Reps objetivo",ej.reps,"number") + '</div>'
+    + (puedeSS ? '<label class="row" style="margin:2px 0 18px;justify-content:flex-start;gap:10px">'
+        + '<input id="e-link" type="checkbox" style="width:19px;height:19px;accent-color:var(--ink)"' + (ej.link ? ' checked' : '') + '>'
+        + '<span class="sub">En superserie con el ejercicio anterior</span></label>' : '')
+    + '<button class="btn" onclick="guardarEjercicio(\'' + id + '\',' + j + ',' + (edit ? e : -1) + ')">' + (edit ? 'Guardar' : 'Añadir') + '</button>'
   );
-  setTimeout(function(){ document.getElementById("e-nombre").focus(); }, 250);
+  if (!edit) setTimeout(function(){ document.getElementById("e-nombre").focus(); }, 250);
 }
-function guardarEjercicio(id, j) {
+function guardarEjercicio(id, j, e) {
   var n = gv("e-nombre");
   if (!n) { toast("Escribe el nombre del ejercicio"); return; }
-  getRutina(id).dias[j].ejercicios.push({ nombre: n, series: gnum("e-series")||4, reps: gnum("e-reps")||10 });
+  var lk = document.getElementById("e-link");
+  var obj = { nombre: n, series: gnum("e-series")||4, reps: gnum("e-reps")||10, link: !!(lk && lk.checked) };
+  var d = getRutina(id).dias[j];
+  if (e >= 0) d.ejercicios[e] = obj; else d.ejercicios.push(obj);
   save(); render();
 }
 
@@ -677,7 +690,7 @@ function iniciarSesion(rutinaId, diaIdx) {
     var ej = d.ejercicios[i], series = [];
     var prev = ultimaSerieDe(ej.nombre); // sugerir peso anterior
     for (var s = 0; s < ej.series; s++) series.push({ peso: prev ? prev.peso : "", reps: ej.reps, done: false });
-    ejercicios.push({ nombre: ej.nombre, objetivo: ej.series + " × " + ej.reps, series: series });
+    ejercicios.push({ nombre: ej.nombre, objetivo: ej.series + " × " + ej.reps, link: !!ej.link, series: series });
   }
   DB.activa = { id: uid(), fecha: todayISO(), rutinaNombre: r.nombre, diaNombre: d.nombre, ejercicios: ejercicios };
   save(); go("entreno", "sesion");
@@ -700,20 +713,34 @@ function viewSesion() {
   var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button>'
     + '<div class="stack" style="margin-bottom:20px"><span class="eyebrow">Sesión en curso · ' + fmtFecha(a.fecha) + '</span>'
     + '<h1>' + esc(a.diaNombre) + '</h1></div>';
-  for (var i = 0; i < a.ejercicios.length; i++) {
-    var ej = a.ejercicios[i];
-    var prev = ultimaSerieDe(ej.nombre);
-    h += '<div class="card"><div class="row" style="margin-bottom:10px"><div class="stack">'
-       + '<h2>' + esc(ej.nombre) + '</h2>'
-       + '<span class="small num">Objetivo ' + ej.objetivo + (prev ? ' · última vez ' + prev.peso + ' kg × ' + prev.reps : '') + '</span></div>'
-       + '<button class="icon-btn" onclick="sAddSerie(' + i + ')">' + icon("mas",18) + '</button></div>'
-       + '<div class="set-head"><span>#</span><span>kg</span><span>reps</span><span></span></div>';
-    for (var s = 0; s < ej.series.length; s++) {
-      var st = ej.series[s];
-      h += '<div class="set-row"><span class="idx">' + (s+1) + '</span>'
-         + '<input inputmode="decimal" value="' + esc(st.peso) + '" onchange="sVal(' + i + ',' + s + ',\'peso\',this.value)">'
-         + '<input inputmode="numeric" value="' + esc(st.reps) + '" onchange="sVal(' + i + ',' + s + ',\'reps\',this.value)">'
-         + '<button class="check' + (st.done ? ' on' : '') + '" onclick="sDone(' + i + ',' + s + ')">' + icon("ok",18) + '</button></div>';
+  /* agrupar ejercicios encadenados en superserie */
+  var grupos = [];
+  for (var gi = 0; gi < a.ejercicios.length; gi++) {
+    if (a.ejercicios[gi].link && grupos.length) grupos[grupos.length-1].push(gi);
+    else grupos.push([gi]);
+  }
+  for (var g = 0; g < grupos.length; g++) {
+    var gr = grupos[g];
+    h += '<div class="card"' + (gr.length > 1 ? ' style="border-left:3px solid var(--ink)"' : '') + '>';
+    if (gr.length > 1) h += '<div class="eyebrow" style="margin-bottom:14px">Superserie · ' + gr.length + ' ejercicios seguidos, sin descanso entre ellos</div>';
+    for (var x = 0; x < gr.length; x++) {
+      var i = gr[x];
+      var ej = a.ejercicios[i];
+      var prev = ultimaSerieDe(ej.nombre);
+      if (x) h += '<div class="hr"></div>';
+      h += '<div class="row" style="margin-bottom:10px"><div class="stack" style="flex:1;min-width:0">'
+         + '<h2>' + (gr.length > 1 ? '<span class="eyebrow" style="letter-spacing:.06em">' + String.fromCharCode(65+x) + '</span> ' : '') + esc(ej.nombre) + '</h2>'
+         + '<span class="small num">Objetivo ' + ej.objetivo + (prev ? ' · última vez ' + prev.peso + ' kg × ' + prev.reps : '') + '</span></div>'
+         + '<button class="icon-btn" onclick="sheetSustituir(' + i + ')" aria-label="Sustituir ejercicio">' + icon("repetir",17) + '</button>'
+         + '<button class="icon-btn" onclick="sAddSerie(' + i + ')" aria-label="Añadir serie">' + icon("mas",18) + '</button></div>'
+         + '<div class="set-head"><span>#</span><span>kg</span><span>reps</span><span></span></div>';
+      for (var s = 0; s < ej.series.length; s++) {
+        var st = ej.series[s];
+        h += '<div class="set-row"><span class="idx">' + (s+1) + '</span>'
+           + '<input inputmode="decimal" value="' + esc(st.peso) + '" onchange="sVal(' + i + ',' + s + ',\'peso\',this.value)">'
+           + '<input inputmode="numeric" value="' + esc(st.reps) + '" onchange="sVal(' + i + ',' + s + ',\'reps\',this.value)">'
+           + '<button class="check' + (st.done ? ' on' : '') + '" onclick="sDone(' + i + ',' + s + ')">' + icon("ok",18) + '</button></div>';
+      }
     }
     h += '</div>';
   }
@@ -721,6 +748,31 @@ function viewSesion() {
      + '<button class="btn quiet" onclick="descartarSesion()">Descartar sesión</button>';
   return h;
 }
+/* sustituir un ejercicio solo para la sesión de hoy (ej. banca con barra → máquina) */
+function sheetSustituir(i) {
+  var ej = DB.activa.ejercicios[i];
+  openSheet(
+    '<h2 style="margin-bottom:8px">Sustituir ejercicio</h2>'
+    + '<p class="sub" style="margin-bottom:18px;line-height:1.5">Solo para la sesión de hoy — la rutina no cambia. El registro se guardará con el nuevo nombre, con su propio histórico de pesos en «Evolución por ejercicio».</p>'
+    + fld("su-nombre","Ejercicio de hoy", ej.nombre)
+    + '<button class="btn" onclick="guardarSustitucion(' + i + ')">Sustituir</button>'
+  );
+  setTimeout(function(){ var el = document.getElementById("su-nombre"); el.focus(); el.select(); }, 250);
+}
+function guardarSustitucion(i) {
+  var n = gv("su-nombre");
+  if (!n) { toast("Escribe el nombre del ejercicio"); return; }
+  var ej = DB.activa.ejercicios[i];
+  if (n !== ej.nombre) {
+    ej.nombre = n;
+    // sugerir el peso de la última vez que se hizo ESTA variante (si existe)
+    var prev = ultimaSerieDe(n);
+    for (var s = 0; s < ej.series.length; s++)
+      if (!ej.series[s].done) ej.series[s].peso = prev ? prev.peso : "";
+  }
+  save(); render(); toast("Hoy: " + n);
+}
+
 function sVal(i, s, campo, v) {
   var num = parseFloat(String(v).replace(",", "."));
   DB.activa.ejercicios[i].series[s][campo] = isNaN(num) ? "" : num;
