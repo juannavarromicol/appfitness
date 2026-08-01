@@ -183,6 +183,13 @@ nav.tabs button.active{color:var(--ink)}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:12px;padding:3px;margin-bottom:16px}
 .seg button{padding:9px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+/* filas de alimentos editables (estimación por foto) */
+.ali-row{display:grid;grid-template-columns:1fr 78px auto 34px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.ali-row .ali-nombre{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:14px;min-width:0}
+.ali-row .ali-g{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:0 8px 0 0}
+.ali-row .ali-g input{width:44px;text-align:right;padding:9px 2px 9px 8px;font-size:14px;font-variant-numeric:tabular-nums}
+.ali-row .ali-g span{font-size:12px;color:var(--ink-3)}
+.ali-row .ali-kcal{font-size:12.5px;color:var(--ink-2);text-align:right;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -195,6 +202,8 @@ nav.tabs button.active{color:var(--ink)}
 "use strict";
 
 var STORE_KEY = "bitacora_v1";
+var IDB_NAME = "bitacora";
+var IDB_STORE = "estado";
 
 var DEFAULTS = {
   version: 1,
@@ -207,23 +216,105 @@ var DEFAULTS = {
   frecuentes: []     // {id,nombre,kcal,prot,carb,fat,foto}
 };
 
-var DB = load();
+var DB = JSON.parse(JSON.stringify(DEFAULTS));
+var IDB = null;               // handle de la base de datos abierta
+var savePend = false;         // hay un guardado pendiente
+var saveRun = false;          // hay un guardado en curso
 
-function load() {
-  try {
-    var raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
-    var d = JSON.parse(raw);
-    // fusiona claves nuevas si se amplía el modelo en el futuro
-    for (var k in DEFAULTS) if (!(k in d)) d[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
-    if (!d.settings.goals) d.settings.goals = DEFAULTS.settings.goals;
-    return d;
-  } catch (e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+/* rellena claves nuevas del modelo sin perder las existentes */
+function normaliza(d) {
+  for (var k in DEFAULTS) if (!(k in d)) d[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
+  if (!d.settings) d.settings = JSON.parse(JSON.stringify(DEFAULTS.settings));
+  if (!d.settings.goals) d.settings.goals = JSON.parse(JSON.stringify(DEFAULTS.settings.goals));
+  return d;
 }
 
+/* abre (o crea) IndexedDB */
+function abrirIDB(cb) {
+  try {
+    var req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = function(e) { IDB = e.target.result; cb(true); };
+    req.onerror = function() { cb(false); };
+  } catch (err) { cb(false); }
+}
+
+/* arranque: carga desde IndexedDB; si está vacío, migra desde localStorage */
+function iniciar(cb) {
+  abrirIDB(function(ok) {
+    if (!ok) {              // navegador sin IndexedDB → seguimos con localStorage
+      DB = cargarLocal();
+      cb();
+      return;
+    }
+    leerIDB(function(datos) {
+      if (datos) {
+        DB = normaliza(datos);
+        cb();
+      } else {
+        // primera vez con IndexedDB: intenta migrar el estado antiguo
+        var antiguo = cargarLocal(true);
+        DB = antiguo || JSON.parse(JSON.stringify(DEFAULTS));
+        escribirIDB(function(){
+          // libera el localStorage viejo para recuperar esos ~5 MB
+          try { localStorage.removeItem(STORE_KEY); } catch(e){}
+          cb();
+        });
+      }
+    });
+  });
+}
+
+function cargarLocal(soloSiHay) {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return soloSiHay ? null : JSON.parse(JSON.stringify(DEFAULTS));
+    return normaliza(JSON.parse(raw));
+  } catch (e) { return soloSiHay ? null : JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+
+function leerIDB(cb) {
+  try {
+    var tx = IDB.transaction(IDB_STORE, "readonly");
+    var req = tx.objectStore(IDB_STORE).get(STORE_KEY);
+    req.onsuccess = function() { cb(req.result || null); };
+    req.onerror = function() { cb(null); };
+  } catch (e) { cb(null); }
+}
+
+function escribirIDB(cb) {
+  try {
+    var tx = IDB.transaction(IDB_STORE, "readwrite");
+    tx.objectStore(IDB_STORE).put(DB, STORE_KEY);
+    tx.oncomplete = function() { if (cb) cb(true); };
+    tx.onerror = function() { if (cb) cb(false); };
+    tx.onabort = function() { if (cb) cb(false); };
+  } catch (e) { if (cb) cb(false); }
+}
+
+/* save() mantiene la firma síncrona que usa todo el código.
+   Por dentro guarda en IndexedDB de forma asíncrona, encolando
+   escrituras para no solaparlas (la última siempre gana). */
 function save() {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
-  catch (e) { toast("No se pudo guardar (almacenamiento lleno)"); }
+  if (!IDB) {                 // sin IndexedDB: respaldo en localStorage
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
+    catch (e) { toast("No se pudo guardar (almacenamiento lleno)"); }
+    return;
+  }
+  savePend = true;
+  vaciarCola();
+}
+function vaciarCola() {
+  if (saveRun || !savePend) return;
+  saveRun = true; savePend = false;
+  escribirIDB(function(ok) {
+    saveRun = false;
+    if (!ok) toast("No se pudo guardar. Exporta un backup por seguridad.");
+    if (savePend) vaciarCola();   // hubo más cambios mientras guardaba
+  });
 }
 
 /* ---------- utilidades ---------- */
@@ -923,10 +1014,14 @@ function delComida(id) {
                 (nunca se persiste, para no agotar el almacenamiento) */
 var FOTO_TMP = null;
 var FOTO_HD = null;
+var ALIMENTOS_TMP = [];   // alimentos editables de la comida en curso
+var EDIT_FREC = null;     // id de frecuente en edición (o null)
 
 function sheetComida(pre) {
   FOTO_TMP = (pre && pre.foto) || null;
   FOTO_HD = null;
+  ALIMENTOS_TMP = (pre && pre.alimentos) ? pre.alimentos.map(normAlimento) : [];
+  EDIT_FREC = null;
   var tieneKey = !!DB.settings.apiKey;
   openSheet(
     '<h2 style="margin-bottom:18px">Añadir comida</h2>'
@@ -950,6 +1045,7 @@ function sheetComida(pre) {
     + '<button class="btn" onclick="guardarComida()">Guardar comida</button>'
     + (!tieneKey ? '<div class="small" style="margin-top:12px;text-align:center;line-height:1.5">Añade tu API key gratuita de Gemini en Ajustes para estimar los macros de la foto automáticamente.</div>' : '')
   );
+  if (ALIMENTOS_TMP.length) { pintarAlimentos(); recalcularTotal(); }
 }
 function fldMini(id, label, val) {
   return '<div class="field" style="margin-bottom:14px"><label style="text-align:center">' + label + '</label>'
@@ -969,8 +1065,8 @@ function fotoElegida(input) {
     // alta resolución (solo memoria, para la IA)
     comprimir(e.target.result, 1400, 0.9, function(hd) {
       FOTO_HD = hd;
-      // miniatura (la que se guarda)
-      comprimir(e.target.result, 520, 0.62, function(thumb) {
+      // miniatura para guardar (más nítida ahora que IndexedDB da espacio)
+      comprimir(e.target.result, 800, 0.75, function(thumb) {
         FOTO_TMP = thumb;
         var box = document.getElementById("c-fotobox");
         if (box) box.innerHTML = fotoBoxHTML();
@@ -996,14 +1092,29 @@ function comprimir(src, max, calidad, cb) {
 
 function guardarComida() {
   var nombre = gv("c-nombre") || "Comida";
+  var alimentos = ALIMENTOS_TMP.length ? ALIMENTOS_TMP.map(normAlimento) : null;
+  var macros = { kcal: gnum("c-kcal"), prot: gnum("c-prot"), carb: gnum("c-carb"), fat: gnum("c-fat") };
+  if (!macros.kcal && !macros.prot && !macros.carb && !macros.fat) { toast("Introduce al menos un valor de macros"); return; }
+
+  // modo edición de una comida frecuente existente
+  if (EDIT_FREC) {
+    for (var i = 0; i < DB.frecuentes.length; i++) {
+      if (DB.frecuentes[i].id === EDIT_FREC) {
+        DB.frecuentes[i] = { id: EDIT_FREC, nombre: nombre, kcal: macros.kcal, prot: macros.prot, carb: macros.carb, fat: macros.fat, foto: FOTO_TMP, alimentos: alimentos };
+        break;
+      }
+    }
+    EDIT_FREC = null; FOTO_TMP = null; FOTO_HD = null; ALIMENTOS_TMP = [];
+    save(); render(); toast("Frecuente actualizada"); return;
+  }
+
   var c = { id: uid(), fecha: DIA_COMIDA, hora: nowHM(), nombre: nombre,
-            kcal: gnum("c-kcal"), prot: gnum("c-prot"), carb: gnum("c-carb"), fat: gnum("c-fat"), foto: FOTO_TMP };
-  if (!c.kcal && !c.prot && !c.carb && !c.fat) { toast("Introduce al menos un valor de macros"); return; }
+            kcal: macros.kcal, prot: macros.prot, carb: macros.carb, fat: macros.fat, foto: FOTO_TMP, alimentos: alimentos };
   DB.comidas.push(c);
   if (document.getElementById("c-frec").checked) {
-    DB.frecuentes.push({ id: uid(), nombre: nombre, kcal: c.kcal, prot: c.prot, carb: c.carb, fat: c.fat, foto: FOTO_TMP });
+    DB.frecuentes.push({ id: uid(), nombre: nombre, kcal: c.kcal, prot: c.prot, carb: c.carb, fat: c.fat, foto: FOTO_TMP, alimentos: alimentos });
   }
-  FOTO_TMP = null; FOTO_HD = null; save(); render(); toast("Comida registrada");
+  FOTO_TMP = null; FOTO_HD = null; ALIMENTOS_TMP = []; save(); render(); toast("Comida registrada");
 }
 
 /* ---------- estimación con IA (Google Gemini, capa gratuita) ----------
@@ -1031,7 +1142,8 @@ function promptMacros(detalles) {
          "si indica cantidades o ingredientes concretos, úsalos tal cual):\n\"" + detalles + "\"\n";
   }
   p += "\nRESPONDE SOLO con JSON válido, sin texto adicional ni markdown, con esta forma exacta:\n" +
-       "{\"nombre\":\"nombre corto del plato en español\",\"kcal\":number,\"prot\":number,\"carb\":number,\"fat\":number,\"desglose\":\"una línea breve indicando los componentes y gramos estimados\"}";
+       "{\"nombre\":\"nombre corto del plato en español\",\"alimentos\":[{\"nombre\":\"alimento\",\"gramos\":number,\"kcal\":number,\"prot\":number,\"carb\":number,\"fat\":number}]}\n" +
+       "Incluye en \"alimentos\" cada componente identificable por separado (p. ej. pasta, atún, tomate, aceite), con sus gramos estimados y sus macros para ESA cantidad. El total del plato será la suma de todos ellos.";
   return p;
 }
 
@@ -1072,16 +1184,16 @@ function estimarIA() {
   btn.disabled = true; btn.innerHTML = '<span class="spin dark"></span> Analizando foto…';
   estimateMacrosFromPhoto(foto, detalles).then(function(r) {
     if (r.nombre && !gv("c-nombre")) document.getElementById("c-nombre").value = r.nombre;
-    document.getElementById("c-kcal").value = Math.round(r.kcal || 0);
-    document.getElementById("c-prot").value = Math.round(r.prot || 0);
-    document.getElementById("c-carb").value = Math.round(r.carb || 0);
-    document.getElementById("c-fat").value  = Math.round(r.fat  || 0);
-    var box = document.getElementById("c-detalle-ia");
-    if (box) box.innerHTML = r.desglose
-      ? '<div class="small" style="margin:-2px 0 16px;line-height:1.5;padding:11px 13px;border:1px dashed var(--line);border-radius:12px">' + esc(r.desglose) + '</div>'
-      : '';
+    // guarda la lista de alimentos y píntala editable
+    ALIMENTOS_TMP = (r.alimentos && r.alimentos.length) ? r.alimentos.map(normAlimento) : [];
+    if (!ALIMENTOS_TMP.length && (r.kcal || r.prot || r.carb || r.fat)) {
+      // por si el modelo devolviera solo el total: crea un único alimento
+      ALIMENTOS_TMP = [normAlimento({ nombre: r.nombre || "Plato", gramos: 0, kcal: r.kcal, prot: r.prot, carb: r.carb, fat: r.fat })];
+    }
+    pintarAlimentos();
+    recalcularTotal();
     btn.disabled = false; btn.innerHTML = icon("chispa",17) + ' Estimar de nuevo';
-    toast("Estimación lista — revísala y ajusta si hace falta");
+    toast("Estimación lista — ajusta los gramos de cada alimento si hace falta");
   }).catch(function(e) {
     btn.disabled = false; btn.innerHTML = icon("chispa",17) + ' Estimar macros con IA';
     var msg = e.message === "HTTP 503" ? "Servidor de Gemini saturado. Inténtalo de nuevo en unos segundos."
@@ -1091,6 +1203,58 @@ function estimarIA() {
   });
 }
 
+function normAlimento(a) {
+  return {
+    nombre: a.nombre || "Alimento",
+    gramos: Math.round(a.gramos || 0),
+    kcal: +a.kcal || 0, prot: +a.prot || 0, carb: +a.carb || 0, fat: +a.fat || 0
+  };
+}
+
+/* pinta la lista de alimentos editable (gramos ajustables por el usuario) */
+function pintarAlimentos() {
+  var box = document.getElementById("c-detalle-ia");
+  if (!box) return;
+  if (!ALIMENTOS_TMP.length) { box.innerHTML = ""; return; }
+  var h = '<div class="eyebrow" style="margin:2px 0 10px">Alimentos detectados · ajusta los gramos</div>';
+  for (var i = 0; i < ALIMENTOS_TMP.length; i++) {
+    var a = ALIMENTOS_TMP[i];
+    h += '<div class="ali-row">'
+       + '<input class="ali-nombre" value="' + esc(a.nombre) + '" onchange="aliNombre(' + i + ',this.value)" placeholder="Alimento">'
+       + '<div class="ali-g"><input inputmode="decimal" value="' + esc(a.gramos) + '" onchange="aliGramos(' + i + ',this.value)"><span>g</span></div>'
+       + '<span class="ali-kcal num">' + Math.round(a.kcal) + ' kcal</span>'
+       + '<button class="icon-btn" onclick="aliDel(' + i + ')" aria-label="Quitar">' + icon("borrar",16) + '</button></div>';
+  }
+  h += '<button class="btn quiet" style="margin:2px 0 6px" onclick="aliAdd()">+ Añadir alimento</button>';
+  box.innerHTML = h;
+}
+/* al cambiar los gramos, escala macros proporcionalmente desde su base */
+function aliGramos(i, v) {
+  var a = ALIMENTOS_TMP[i];
+  var nuevo = parseFloat(String(v).replace(",", ".")) || 0;
+  var base = a.gramos || 0;
+  if (base > 0 && nuevo > 0) {
+    var f = nuevo / base;
+    a.kcal = a.kcal * f; a.prot = a.prot * f; a.carb = a.carb * f; a.fat = a.fat * f;
+  }
+  a.gramos = nuevo;
+  pintarAlimentos(); recalcularTotal();
+}
+function aliNombre(i, v) { ALIMENTOS_TMP[i].nombre = v; }
+function aliDel(i) { ALIMENTOS_TMP.splice(i, 1); pintarAlimentos(); recalcularTotal(); }
+function aliAdd() { ALIMENTOS_TMP.push(normAlimento({ nombre: "", gramos: 100 })); pintarAlimentos(); }
+/* suma todos los alimentos y vuelca el total en los campos de macros */
+function recalcularTotal() {
+  var t = { kcal: 0, prot: 0, carb: 0, fat: 0 };
+  for (var i = 0; i < ALIMENTOS_TMP.length; i++) {
+    var a = ALIMENTOS_TMP[i];
+    t.kcal += a.kcal; t.prot += a.prot; t.carb += a.carb; t.fat += a.fat;
+  }
+  setVal("c-kcal", Math.round(t.kcal)); setVal("c-prot", Math.round(t.prot));
+  setVal("c-carb", Math.round(t.carb)); setVal("c-fat", Math.round(t.fat));
+}
+function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v; }
+
 /* ---------- frecuentes ---------- */
 function sheetFrecuentes() {
   var h = '<h2 style="margin-bottom:18px">Comidas frecuentes</h2>';
@@ -1099,17 +1263,47 @@ function sheetFrecuentes() {
     var f = DB.frecuentes[i];
     h += '<div class="list-item">'
        + (f.foto ? '<img class="thumb" src="' + f.foto + '" alt="">' : '<div class="thumb">' + icon("comida",20) + '</div>')
-       + '<div class="stack" style="flex:1;min-width:0"><span style="font-weight:500">' + esc(f.nombre) + '</span>'
+       + '<div class="stack" style="flex:1;min-width:0" onclick="editarFrec(\'' + f.id + '\')"><span style="font-weight:500">' + esc(f.nombre) + '</span>'
        + '<span class="small num">' + Math.round(f.kcal) + ' kcal · P' + Math.round(f.prot) + ' · C' + Math.round(f.carb) + ' · G' + Math.round(f.fat) + '</span></div>'
+       + '<button class="icon-btn" onclick="editarFrec(\'' + f.id + '\')" aria-label="Editar">' + icon("editar",17) + '</button>'
        + '<button class="btn sm" onclick="repetirFrec(\'' + f.id + '\')">Añadir</button>'
        + '<button class="icon-btn" onclick="delFrec(\'' + f.id + '\')">' + icon("borrar",16) + '</button></div>';
   }
   openSheet(h);
 }
+/* abre la hoja de comida en modo edición de la frecuente (ajustar cantidades/macros) */
+function editarFrec(id) {
+  var f = DB.frecuentes.filter(function(x){ return x.id === id; })[0];
+  if (!f) return;
+  FOTO_TMP = f.foto || null; FOTO_HD = null;
+  ALIMENTOS_TMP = f.alimentos ? f.alimentos.map(normAlimento) : [];
+  EDIT_FREC = id;
+  var tieneKey = !!DB.settings.apiKey;
+  openSheet(
+    '<h2 style="margin-bottom:6px">Editar frecuente</h2>'
+    + '<p class="sub" style="margin-bottom:18px;line-height:1.5">Ajusta cantidades o macros. Si tiene alimentos detectados, cambia sus gramos y el total se recalcula solo.</p>'
+    + '<input id="c-file" type="file" accept="image/*" capture="environment" style="display:none" onchange="fotoElegida(this)">'
+    + '<div id="c-fotobox">' + fotoBoxHTML() + '</div>'
+    + (tieneKey
+        ? '<div class="field" style="margin-bottom:10px"><label>Detalles para la IA (opcional)</label>'
+          + '<textarea id="c-detalles" rows="2" placeholder="Ej. hoy 250 g de patata en vez de 200" style="resize:vertical"></textarea></div>'
+          + '<button id="c-ia" class="btn ghost" style="margin-bottom:16px" onclick="estimarIA()" ' + (FOTO_TMP?'':'disabled') + '>' + icon("chispa",17) + ' Reestimar con IA</button>'
+        : '')
+    + fld("c-nombre","Nombre", f.nombre)
+    + '<div class="grid-4">'
+    + fldMini("c-kcal","kcal", f.kcal) + fldMini("c-prot","prot", f.prot)
+    + fldMini("c-carb","carb", f.carb) + fldMini("c-fat","gras", f.fat)
+    + '</div>'
+    + '<div id="c-detalle-ia"></div>'
+    + '<button class="btn" onclick="guardarComida()">Guardar cambios</button>'
+    + '<button class="btn quiet" onclick="closeSheet();sheetFrecuentes()">Volver</button>'
+  );
+  if (ALIMENTOS_TMP.length) { pintarAlimentos(); recalcularTotal(); }
+}
 function repetirFrec(id) {
   var f = DB.frecuentes.filter(function(x){ return x.id === id; })[0];
   if (!f) return;
-  DB.comidas.push({ id: uid(), fecha: DIA_COMIDA, hora: nowHM(), nombre: f.nombre, kcal: f.kcal, prot: f.prot, carb: f.carb, fat: f.fat, foto: f.foto });
+  DB.comidas.push({ id: uid(), fecha: DIA_COMIDA, hora: nowHM(), nombre: f.nombre, kcal: f.kcal, prot: f.prot, carb: f.carb, fat: f.fat, foto: f.foto, alimentos: f.alimentos || null });
   save(); render(); toast("«" + f.nombre + "» añadida");
 }
 function delFrec(id) {
@@ -1309,8 +1503,7 @@ function importarBackup(input) {
       var d = JSON.parse(e.target.result);
       if (!d || typeof d !== "object" || !("comidas" in d) || !("sesiones" in d)) throw new Error("formato");
       if (!confirm("Esto sustituirá los datos actuales por los del backup. ¿Continuar?")) return;
-      for (var k in DEFAULTS) if (!(k in d)) d[k] = JSON.parse(JSON.stringify(DEFAULTS[k]));
-      DB = d; save(); render(); toast("Backup importado");
+      DB = normaliza(d); save(); render(); toast("Backup importado");
     } catch (err) { toast("El archivo no es un backup válido"); }
   };
   reader.readAsText(file);
@@ -1320,7 +1513,9 @@ function importarBackup(input) {
 /* ============================================================
    ARRANQUE
    ============================================================ */
-render();
+iniciar(function() {
+  render();
+});
 </script>
 </body>
 </html>
