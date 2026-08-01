@@ -1411,7 +1411,9 @@ function verInforme() {
 function informeEjercicios() {
   var nombres = listaEjercicios();
   if (!nombres.length) return "Sin sesiones registradas todavía.";
-  var lineas = ["INFORME DE PROGRESO POR EJERCICIO — " + fmtFecha(todayISO(), true), ""];
+  var lineas = ["INFORME DE PROGRESO POR EJERCICIO — " + fmtFecha(todayISO(), true),
+    "Cada sesión detalla todas las series como peso×reps. e1RM = 1RM estimado (fórmula de Epley: peso × (1 + reps/30)), útil para comparar progresión aunque cambien peso y repeticiones.",
+    ""];
   var ses = DB.sesiones.slice().sort(byDateAsc);
   for (var n = 0; n < nombres.length; n++) {
     var nombre = nombres[n], regs = [];
@@ -1419,21 +1421,39 @@ function informeEjercicios() {
       for (var j = 0; j < ses[i].ejercicios.length; j++)
         if (ses[i].ejercicios[j].nombre === nombre) {
           var done = ses[i].ejercicios[j].series.filter(function(s){ return s.done && s.peso; });
-          if (done.length) regs.push({ fecha: ses[i].fecha, max: Math.max.apply(null, done.map(function(s){return s.peso;})) });
+          if (!done.length) continue;
+          var maxP = Math.max.apply(null, done.map(function(s){ return s.peso; }));
+          var vol = 0, e1rm = 0;
+          for (var k = 0; k < done.length; k++) {
+            var reps = done[k].reps || 0;
+            vol += done[k].peso * reps;
+            var est = done[k].peso * (1 + reps / 30);   // Epley
+            if (est > e1rm) e1rm = est;
+          }
+          regs.push({ fecha: ses[i].fecha, max: maxP, series: done, vol: vol, e1rm: e1rm });
         }
     if (!regs.length) continue;
     var primero = regs[0], ultimo = regs[regs.length-1];
     var pr = Math.max.apply(null, regs.map(function(r){ return r.max; }));
+    var e1rmMax = Math.max.apply(null, regs.map(function(r){ return r.e1rm; }));
     var dif = n1(ultimo.max - primero.max);
-    // tendencia reciente: últimos 4 registros
+    var difE1rm = n1(ultimo.e1rm - primero.e1rm);
+    // tendencia por e1RM (captura progresión aunque cambien reps): últimos 4 registros
     var rec = regs.slice(-4), tend = "estable";
     if (rec.length >= 2) {
-      var d2 = rec[rec.length-1].max - rec[0].max;
-      tend = d2 > 0.5 ? "progresando" : d2 < -0.5 ? "retrocediendo" : (regs.length >= 3 ? "estancado" : "estable");
+      var d2 = rec[rec.length-1].e1rm - rec[0].e1rm;
+      tend = d2 > 0.75 ? "progresando" : d2 < -0.75 ? "retrocediendo" : (regs.length >= 3 ? "estancado" : "estable");
     }
     lineas.push("• " + nombre);
-    lineas.push("   " + regs.length + " sesiones · " + primero.max + " kg (" + fmtFecha(primero.fecha) + ") → " + ultimo.max + " kg (" + fmtFecha(ultimo.fecha) + ")");
-    lineas.push("   PR: " + pr + " kg · cambio total: " + (dif >= 0 ? "+" : "") + dif + " kg · tendencia reciente: " + tend);
+    lineas.push("   " + regs.length + " sesiones · peso máx: " + primero.max + " kg → " + ultimo.max + " kg (" + (dif>=0?"+":"") + dif + " kg)");
+    lineas.push("   e1RM: " + n1(primero.e1rm) + " kg → " + n1(ultimo.e1rm) + " kg (" + (difE1rm>=0?"+":"") + difE1rm + " kg) · mejor e1RM: " + n1(e1rmMax) + " kg · PR peso: " + pr + " kg");
+    lineas.push("   Tendencia reciente (por e1RM): " + tend);
+    lineas.push("   Detalle por sesión:");
+    for (var r = 0; r < regs.length; r++) {
+      var g = regs[r];
+      var det = g.series.map(function(s){ return s.peso + "×" + (s.reps || "?"); }).join(", ");
+      lineas.push("     " + fmtFecha(g.fecha) + ": " + det + "  [vol " + Math.round(g.vol) + " kg · e1RM " + n1(g.e1rm) + " kg]");
+    }
     lineas.push("");
   }
   return lineas.join("\n");
