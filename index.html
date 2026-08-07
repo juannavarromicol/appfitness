@@ -153,6 +153,7 @@ nav.tabs button.active{color:var(--ink)}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--line);
   border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);background:var(--card)}
 .chip:active{background:var(--press)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 
 /* ---------- Gráficos ---------- */
@@ -213,7 +214,8 @@ var DEFAULTS = {
   activa: null,      // sesión en curso (sobrevive a recargas)
   pesos: [],         // {fecha,kg}
   comidas: [],       // {id,fecha,hora,nombre,kcal,prot,carb,fat,foto}
-  frecuentes: []     // {id,nombre,kcal,prot,carb,fat,foto}
+  frecuentes: [],    // {id,nombre,kcal,prot,carb,fat,foto}
+  cardio: []         // {id,fecha,tipo,min,nota}
 };
 
 var DB = JSON.parse(JSON.stringify(DEFAULTS));
@@ -383,6 +385,8 @@ function icon(name, sz) {
     descargar: '<path d="M12 4v11M7.5 11.5 12 16l4.5-4.5M5 19.5h14"/>',
     repetir: '<path d="M4 12a8 8 0 0 1 13.6-5.7L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.6 5.7L4 15.5M4 20v-4.5h4.5"/>',
     peso: '<circle cx="12" cy="12" r="8.5"/><path d="M12 12l3-4"/><path d="M7.5 15.5h9"/>',
+    cardio: '<path d="M3 12.5h3.5l1.5-4 2.5 8 2-6 1.5 2h4.5"/>',
+    reloj: '<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 1.8"/>',
     chispa: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z"/>'
   };
   return '<svg viewBox="0 0 24 24" width="'+(sz||20)+'" height="'+(sz||20)+'" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+paths[name]+'</svg>';
@@ -531,6 +535,18 @@ function viewHoy() {
     }
   }
 
+  /* --- cardio de hoy --- */
+  var cardHoy = DB.cardio.filter(function(c){ return c.fecha === hoy; });
+  if (cardHoy.length) {
+    var minHoy = sum(cardHoy, function(c){ return c.min; });
+    var tipos = cardHoy.map(function(c){ return c.tipo; }).join(" · ");
+    h += '<div class="card"><div class="row"><div class="stack" style="min-width:0"><h2>' + minHoy + ' min de cardio</h2>'
+       + '<span class="sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(tipos) + '</span></div>'
+       + '<span style="color:var(--ink)">' + icon("cardio") + '</span></div></div>';
+  } else {
+    h += '<button class="btn quiet" onclick="sheetCardio()">' + icon("cardio",17) + ' Añadir cardio de hoy</button>';
+  }
+
   /* --- peso corporal --- */
   h += '<div class="section-title"><span class="eyebrow">Peso corporal</span>'
      + '<button class="btn quiet" style="width:auto;padding:0" onclick="sheetPeso()">Añadir</button></div>';
@@ -618,6 +634,90 @@ function guardarPeso() {
   save(); render(); toast("Peso guardado");
 }
 
+/* ---------- cardio ---------- */
+var CARDIO_TIPOS = ["Andar en cinta", "Andar en calle", "Correr en cinta", "Correr en calle", "Bici", "Elíptica", "Pádel", "Natación"];
+var CARDIO_SEL = "";
+
+function cardioUltimos(dias) {
+  var lim = new Date(); lim.setDate(lim.getDate() - dias + 1);
+  var limISO = todayISO(lim), total = 0;
+  for (var i = 0; i < DB.cardio.length; i++)
+    if (DB.cardio[i].fecha >= limISO) total += DB.cardio[i].min || 0;
+  return total;
+}
+
+function sheetCardio() {
+  CARDIO_SEL = CARDIO_TIPOS[0];
+  var chips = "";
+  for (var i = 0; i < CARDIO_TIPOS.length; i++) {
+    chips += '<button type="button" class="chip cardio-chip' + (i === 0 ? ' on' : '') + '" onclick="selCardio(this,\'' + esc(CARDIO_TIPOS[i]) + '\')">' + esc(CARDIO_TIPOS[i]) + '</button>';
+  }
+  chips += '<button type="button" class="chip cardio-chip" onclick="selCardioOtro(this)">Otro…</button>';
+  openSheet(
+    '<h2 style="margin-bottom:18px">Añadir cardio</h2>'
+    + '<div class="field"><label>Tipo</label><div class="chips" id="cd-chips">' + chips + '</div></div>'
+    + '<div id="cd-otro"></div>'
+    + '<div class="grid-2">' + fld("cd-min","Minutos","","number") + fld("cd-fecha","Fecha",todayISO(),"date") + '</div>'
+    + '<div class="field"><label>Nota (opcional)</label><input id="cd-nota" placeholder="Ej. ritmo suave, partido con amigos"></div>'
+    + '<button class="btn" onclick="guardarCardio()">Guardar cardio</button>'
+  );
+  setTimeout(function(){ var el = document.getElementById("cd-min"); if (el) el.focus(); }, 250);
+}
+function selCardio(btn, tipo) {
+  CARDIO_SEL = tipo;
+  var chips = document.querySelectorAll(".cardio-chip");
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove("on");
+  btn.classList.add("on");
+  var otro = document.getElementById("cd-otro"); if (otro) otro.innerHTML = "";
+}
+function selCardioOtro(btn) {
+  CARDIO_SEL = "";
+  var chips = document.querySelectorAll(".cardio-chip");
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove("on");
+  btn.classList.add("on");
+  document.getElementById("cd-otro").innerHTML =
+    '<div class="field"><label>¿Qué has hecho?</label><input id="cd-otro-txt" placeholder="Ej. Remo, senderismo, baloncesto" autofocus></div>';
+  setTimeout(function(){ var el = document.getElementById("cd-otro-txt"); if (el) el.focus(); }, 100);
+}
+function guardarCardio() {
+  var tipo = CARDIO_SEL;
+  if (!tipo) {
+    var t = document.getElementById("cd-otro-txt");
+    tipo = t ? t.value.trim() : "";
+    if (!tipo) { toast("Indica qué tipo de cardio has hecho"); return; }
+  }
+  var min = gnum("cd-min");
+  if (!min || min <= 0) { toast("Introduce los minutos"); return; }
+  DB.cardio.push({ id: uid(), fecha: gv("cd-fecha") || todayISO(), tipo: tipo, min: Math.round(min), nota: gv("cd-nota") });
+  save(); render(); toast("Cardio guardado");
+}
+function delCardio(id) {
+  if (!confirm("¿Eliminar este registro de cardio?")) return;
+  DB.cardio = DB.cardio.filter(function(c){ return c.id !== id; });
+  save(); render();
+}
+function viewCardioTodo() {
+  var h = '<button class="back" onclick="go(\'entreno\')">' + icon("atras",16) + ' Entreno</button>'
+    + '<div class="row" style="margin-bottom:18px"><h1>Cardio</h1>'
+    + '<button class="icon-btn" onclick="sheetCardio()">' + icon("mas") + '</button></div>';
+  var card = DB.cardio.slice().sort(byDateAsc).reverse();
+  if (!card.length) return h + '<div class="empty">' + icon("cardio",34) + '<p>Sin registros de cardio todavía.</p></div>';
+  h += '<div class="card"><div class="row">'
+     + '<div class="stack"><span class="eyebrow">7 días</span><span class="big-num">' + cardioUltimos(7) + ' <span class="sub" style="font-size:15px">min</span></span></div>'
+     + '<div class="stack"><span class="eyebrow">30 días</span><span class="big-num">' + cardioUltimos(30) + ' <span class="sub" style="font-size:15px">min</span></span></div>'
+     + '<div class="stack" style="align-items:flex-end"><span class="eyebrow">Total</span><span class="big-num">' + card.length + ' <span class="sub" style="font-size:15px">sesiones</span></span></div></div></div>';
+  h += '<div class="card">';
+  for (var c = 0; c < card.length; c++) {
+    var cd = card[c];
+    h += '<div class="list-item"><div class="thumb" style="background:none;border:1px solid var(--line)">' + icon("cardio",20) + '</div>'
+       + '<div class="stack" style="flex:1;min-width:0"><span style="font-weight:500">' + esc(cd.tipo) + '</span>'
+       + '<span class="small">' + fmtFecha(cd.fecha, true) + (cd.nota ? ' · ' + esc(cd.nota) : '') + '</span></div>'
+       + '<span class="sub num" style="white-space:nowrap">' + cd.min + ' min</span>'
+       + '<button class="icon-btn" onclick="delCardio(\'' + cd.id + '\')">' + icon("borrar",16) + '</button></div>';
+  }
+  return h + '</div>';
+}
+
 /* ============================================================
    VISTA · ENTRENO
    ============================================================ */
@@ -626,6 +726,7 @@ function viewEntreno() {
   if (ROUTE.sub === "rutina") return viewRutinaEdit(ROUTE.param);
   if (ROUTE.sub === "ejercicio") return viewEjercicio(ROUTE.param);
   if (ROUTE.sub === "historial") return viewHistorial();
+  if (ROUTE.sub === "cardio") return viewCardioTodo();
 
   var h = '<header class="top"><h1>Entreno</h1>'
         + '<button class="icon-btn" onclick="nuevaRutina()" aria-label="Nueva rutina">' + icon("mas") + '</button></header>';
@@ -652,6 +753,32 @@ function viewEntreno() {
          + '<span class="small">' + d.ejercicios.length + ' ejercicios</span></div>'
          + '<button class="btn sm" onclick="iniciarSesion(\'' + r.id + '\',' + j + ')">Entrenar</button></div>';
     }
+    h += '</div>';
+  }
+
+  /* cardio */
+  h += '<div class="section-title"><span class="eyebrow">Cardio</span>'
+     + '<button class="btn quiet" style="width:auto;padding:0" onclick="sheetCardio()">Añadir</button></div>';
+  var card = DB.cardio.slice().sort(byDateAsc).reverse();
+  if (!card.length) {
+    h += '<div class="card card-tap" onclick="sheetCardio()"><div class="row">'
+       + '<div class="stack"><h2>Registra tu cardio</h2><span class="sub">Cinta, calle, pádel… tipo y minutos</span></div>'
+       + '<span style="color:var(--ink-3)">' + icon("cardio") + '</span></div></div>';
+  } else {
+    var totalSem = cardioUltimos(7), totalMes = cardioUltimos(30);
+    h += '<div class="card"><div class="row" style="margin-bottom:14px">'
+       + '<div class="stack"><span class="eyebrow">Últimos 7 días</span><span class="big-num">' + totalSem + ' <span class="sub" style="font-size:15px">min</span></span></div>'
+       + '<div class="stack" style="align-items:flex-end"><span class="eyebrow">Últimos 30 días</span><span class="big-num">' + totalMes + ' <span class="sub" style="font-size:15px">min</span></span></div></div>';
+    var muestra = card.slice(0, 5);
+    for (var c = 0; c < muestra.length; c++) {
+      var cd = muestra[c];
+      h += '<div class="list-item"><div class="thumb" style="background:none;border:1px solid var(--line)">' + icon("cardio",20) + '</div>'
+         + '<div class="stack" style="flex:1;min-width:0"><span style="font-weight:500">' + esc(cd.tipo) + '</span>'
+         + '<span class="small">' + fmtFecha(cd.fecha, true) + (cd.nota ? ' · ' + esc(cd.nota) : '') + '</span></div>'
+         + '<span class="sub num" style="white-space:nowrap">' + cd.min + ' min</span>'
+         + '<button class="icon-btn" onclick="delCardio(\'' + cd.id + '\')">' + icon("borrar",16) + '</button></div>';
+    }
+    if (card.length > 5) h += '<button class="btn quiet" style="margin-top:6px" onclick="go(\'entreno\',\'cardio\')">Ver todo (' + card.length + ')</button>';
     h += '</div>';
   }
 
@@ -1394,7 +1521,7 @@ function viewInformes() {
 
   /* resumen rápido de volumen de datos */
   h += '<div class="small" style="text-align:center;margin-top:8px">'
-     + DB.sesiones.length + ' sesiones · ' + DB.comidas.length + ' comidas · ' + DB.pesos.length + ' pesajes registrados</div>';
+     + DB.sesiones.length + ' sesiones · ' + DB.cardio.length + ' cardios · ' + DB.comidas.length + ' comidas · ' + DB.pesos.length + ' pesajes</div>';
   return h;
 }
 
@@ -1489,6 +1616,25 @@ function informeCompleto() {
 
   L.push("== PROGRESO POR EJERCICIO ==");
   L.push(informeEjercicios());
+
+  L.push("== CARDIO ==");
+  var card = DB.cardio.slice().sort(byDateAsc);
+  if (!card.length) L.push("(sin registros)");
+  else {
+    L.push("Resumen: " + cardioUltimos(7) + " min en los últimos 7 días · " + cardioUltimos(30) + " min en los últimos 30 días · " + card.length + " sesiones totales.");
+    // agrupado por tipo
+    var porTipo = {};
+    for (var t = 0; t < card.length; t++) porTipo[card[t].tipo] = (porTipo[card[t].tipo] || 0) + card[t].min;
+    var tipos = Object.keys(porTipo).sort(function(a,b){ return porTipo[b] - porTipo[a]; });
+    var resumenTipo = tipos.map(function(k){ return k + " " + porTipo[k] + " min"; }).join(" · ");
+    L.push("Por tipo: " + resumenTipo);
+    L.push("Detalle:");
+    for (var cc = 0; cc < card.length; cc++) {
+      var cd = card[cc];
+      L.push("   " + cd.fecha + ": " + cd.tipo + " · " + cd.min + " min" + (cd.nota ? " (" + cd.nota + ")" : ""));
+    }
+  }
+  L.push("");
 
   L.push("== ALIMENTACIÓN (por día) ==");
   var dias = {};
